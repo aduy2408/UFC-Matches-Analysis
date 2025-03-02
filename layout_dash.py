@@ -1,132 +1,182 @@
-# layout_dash.py
-import dash
-from dash import dcc, html
-from plotly.subplots import make_subplots
 
-def create_layout(fighters_df,results_df):
-    layout = html.Div([
-        html.Div([
-            html.H1("UFC Fighter Analytics Dashboard", 
-                    style={'textAlign': 'center', 'color': '#d20a0a', 'marginBottom': 30})
-        ]),
-        
-        dcc.Tabs([
-            dcc.Tab(label='Fighter Analysis', children=[
-                html.Div([
-                    html.Div([
-                        html.H3("Select Fighter",style={'textAlign': 'center', 'color': '#d20a0a', 'marginBottom': 30}),
+import dash
+from dash import dcc, html, callback, Input, Output
+import dash_bootstrap_components as dbc
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+import numpy as np
+
+
+
+def create_fighters_tab(fighters_df):
+    return dbc.Container([
+        dbc.Row([
+            dbc.Col([
+                html.H4("SELECT FIGHTER", className="text-danger"),
+                html.Label('Select fighter name'),
+                dcc.Dropdown(
+                    id='fighter-dropdown',
+                    options=[{'label': name, 'value': name} for name in fighters_df['Name']],
+                    value=fighters_df['Name'][0],
+                    className="mb-4"
+                ),
+            ], width=4),
+            dbc.Col([
+                html.H4("FILTER OPTIONS", className="text-danger"),
+                dbc.Row([
+                    dbc.Col([
+                        html.Label("Weight Class"),
                         dcc.Dropdown(
-                            id='fighter-dropdown',
-                            options=[{'label': name, 'value': name} for name in fighters_df['Name'].unique()],
-                            value=fighters_df['Name'].iloc[0]  
+                            id='weight-class-filter',
+                            options=[{'label': wc, 'value': wc} 
+                                    for wc in sorted(fighters_df['Weight_Class'].unique())],
+                            multi=True,
+                            placeholder="All Weight Classes"
                         ),
-                        html.Div(id='fighter-info-card', className='stats-card')
-                    ], style={'width': '30%', 'display': 'inline-block', 'vertical-align': 'top'}),
-                    
-                    html.Div([
-                        html.H3("Fighter Statistics",style={'textAlign': 'center', 'color': '#d20a0a', 'marginBottom': 30}),
-                        dcc.Graph(id='fighter-stats-radar')
-                    ], style={'width': '35%', 'display': 'inline-block'}),
-                    
-                    html.Div([
-                        html.H3("Career Record",style={'textAlign': 'center', 'color': '#d20a0a', 'marginBottom': 30}),
-                        dcc.Graph(id='fighter-win-loss-pie')
-                    ], style={'width': '35%', 'display': 'inline-block'})
+                    ], width=12),
                 ]),
-                
-                html.Div([
-                    html.H3("Fighting Style Breakdown",style={'textAlign': 'center', 'color': '#d20a0a', 'marginBottom': 30}),
-                    dcc.Graph(id='fighter-style-breakdown')
-                ])
-            ]),
-            
-        dcc.Tab(label='Match Analysis', children=[
-            html.Div([
-                html.Div([
-                    html.H3("Select Match",style={'textAlign': 'center', 'color': '#d20a0a', 'marginBottom': 30}),
-                    dcc.Dropdown(
-                        id='match-dropdown',
-                        options=[{'label': bout, 'value':bout} for bout in results_df['BOUT'].unique()],  
-                        value=results_df['BOUT'].iloc[0]  
-                    ),
-                    html.Div(id='match-info-card', className='stats-card'),
-                ], style={'width': '30%', 'display': 'inline-block', 'verticalAlign': 'top'}),
-                        
-                html.Div([
-                        html.H3("Fighters",style={'textAlign': 'center', 'color': '#d20a0a', 'marginBottom': 30}),
-                        html.Div([
-                            html.Div([
-                                html.Img(id='fighter-1-image', src='', 
-                                        style={'width': '300px', 'height': 'auto', 'borderRadius': '5px','display':'block','margin':'auto'}),
-                                html.P(id='fighter-1-name', style={'textAlign': 'center'})
-                            ], style={'width': '45%'}),
-                            html.Div(style={'width': '45%', 'textAlign': 'center', 'alignSelf': 'center'},children=[
-                                html.Img(src='https://res.cloudinary.com/da7h9bpnj/image/upload/v1740722018/Pngtree_vs_624541_ty55wp.png', 
-                                        style={'width': '300px', 'height': 'auto', 'borderRadius': '5px','display':'block','margin':'auto'}),
-                            ]),                           
-                            html.Div([
-                                html.Img(id='fighter-2-image', src='', 
-                                        style={'width': '300px', 'height': 'auto', 'borderRadius': '5px','display':'block','margin':'auto'}),
-                                html.P(id='fighter-2-name', style={'textAlign': 'center'})
-                            ], style={'width': '45%'})
-                        ], style={'display': 'flex', 'justifyContent': 'space-between', 'width': '100%'})
-                    ], style={'width': '65%', 'display': 'inline-block', 'verticalAlign': 'top', 'paddingLeft': '20px'})
-                ], style={'display': 'flex', 'marginBottom': '20px'}),    
-                        
-                        
-                html.Div([
-                    html.Div([
-                        html.H3("Round Performance"),
-                        dcc.Graph(id='round-stats')
-                    ], style={'width': '70%', 'display': 'inline-block'}),
-                    html.Div([
-                        html.H3("Strike Distribution"),
-                        dcc.Graph(id='strike-distribution')
-                    ], style={'width': '50%', 'display': 'inline-block'}),
-                    
-                    html.Div([
-                        html.H3("Takedown Success"),
-                        dcc.Graph(id='takedown-success')
-                    ], style={'width': '50%', 'display': 'inline-block'})
-                ])  
-            ]),
+            ], width=6),
+        ], className="mb-4"),
         
-            dcc.Tab(label='Fighter Comparison', children=[
-                html.Div([
-                    html.H3("Compare Fighters", style={'textAlign': 'center'}),
-                    
-                    html.Div([
-                        html.Div([
-                            dcc.Dropdown(
-                                id='fighter-dropdown-1',
-                                options=[{'label': name, 'value': name} for name in fighters_df['Name'].unique()],
-                                value=fighters_df['Name'].iloc[0]  
-                            ),
-                            html.Div(id='fighter-1-info-card', className='stats-card'),
-                        ], style={'width': '45%', 'display': 'inline-block', 'verticalAlign': 'top'}),
-                        
-                        html.Div([
-                            dcc.Dropdown(
-                                id='fighter-dropdown-2',
-                                options=[{'label': name, 'value': name} for name in fighters_df['Name'].unique()],
-                                value=fighters_df['Name'].iloc[1]  
-                            ),
-                            html.Div(id='fighter-2-info-card', className='stats-card')
-                        ], style={'width': '45%', 'display': 'inline-block', 'verticalAlign': 'top'}),
-                        
-                    ], style={'display': 'flex', 'justifyContent': 'space-between'}), 
-                    
-                    html.Div([
-                            html.H3("Stats comparing",style={'textAlign': 'center'}),
-                            
-                            dcc.Graph(id='fighter-comparison-piechart'),
-                            
-                            dcc.Graph(id= 'fighter-comparison-radar')
-                        
-                    ])
+        dbc.Row([
+            dbc.Col([
+                dbc.Card([
+                    dbc.CardHeader(html.H5("FIGHTER PROFILE", className="text-center")),
+                    dbc.CardBody(
+                        html.Div(id="fighter-profile-content")
+                    )
+                ]),
+            ], width=4),
+            dbc.Col([
+                dbc.Card([
+                    dbc.CardHeader(html.H5("PERFORMANCE METRICS", className="text-center")),
+                    dbc.CardBody(
+                        dcc.Graph(id="fighter-radar-chart", style={"height": "400px"})
+                    )
+                ]),
+            ], width=8),
+        ], className="mb-4"),
+        
+        dbc.Row([
+            dbc.Col([
+                dbc.Card([
+                    dbc.CardHeader(html.H5("RECENT FIGHTS", className="text-center")),
+                    dbc.CardBody(
+                        html.Div(id="fighter-recent-fights")
+                    )
+                ]),
             ]),
-        ])
+        ]),
     ])
 
-]) 
+def create_matches_tab(results_df):
+    return dbc.Container([
+        dbc.Row([
+            dbc.Col([
+                html.H4("SELECT EVENT", className="text-danger"),
+                dcc.Dropdown(
+                    id='event-dropdown',
+                    options=[{'label': event, 'value': event} for event in sorted(results_df['EVENT'].unique())],
+                    value=results_df['EVENT'][0],
+                    className="mb-4"
+                ),
+            ], width=4),
+            dbc.Col([
+                html.H4("FILTER OPTIONS", className="text-danger"),
+                dbc.Row([
+                    dbc.Col([
+                        html.Label("DATE Range"),
+                        dcc.DatePickerRange(
+                            id='date-range',
+                            min_date_allowed=min(pd.to_datetime(results_df['DATE'])),
+                            max_date_allowed=max(pd.to_datetime(results_df['DATE'])),
+                            start_date=min(pd.to_datetime(results_df['DATE'])),
+                            end_date=max(pd.to_datetime(results_df['DATE'])),
+                        ),
+                    ], width=6),
+                ]),
+            ], width=8),
+        ], className="mb-4"),
+        
+        dbc.Row([
+            dbc.Col([
+                dbc.Card([
+                    dbc.CardHeader(html.H5("MATCH DETAILS", className="text-center")),
+                    dbc.CardBody(
+                        html.Div(id="match-details-content")
+                    )
+                ]),
+            ], width=5),
+            dbc.Col([
+                dbc.Card([
+                    dbc.CardHeader(html.H5("FIGHT STATISTICS", className="text-center")),
+                    dbc.CardBody(
+                        dcc.Graph(id="match-stats-chart", style={"height": "400px"})
+                    )
+                ]),
+            ], width=7),
+        ], className="mb-4"),
+        
+        dbc.Row([
+            dbc.Col([
+                dbc.Card([
+                    dbc.CardHeader(html.H5("FINISH DISTRIBUTION", className="text-center")),
+                    dbc.CardBody(
+                        dcc.Graph(id="finish-distribution", style={"height": "300px"})
+                    )
+                ]),
+            ], width=6),
+            dbc.Col([
+                dbc.Card([
+                    dbc.CardHeader(html.H5("ROUND FINISHES", className="text-center")),
+                    dbc.CardBody(
+                        dcc.Graph(id="round-finishes", style={"height": "300px"})
+                    )
+                ]),
+            ], width=6),
+        ]),
+    ])
+
+def create_layout_2(fighters_df, results_df):
+    navbar = dbc.Navbar(
+        dbc.Container(
+            [
+                html.A(
+                    dbc.Row(
+                        [
+                            dbc.Col(html.Img(src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/UFC_Logo.svg/2560px-UFC_Logo.svg.png", height="50px")),
+                            dbc.Col(html.H3("UFC ANALYTICS", className="ms-3 text-light")),
+                        ],
+                        align="center",
+                    ),
+                    style={"textDecoration": "none"},
+                ),
+                dbc.Nav(
+                    [
+                        dbc.NavItem(dbc.NavLink("FIGHTER STATS", href="#fighters", id="fighters-link")),
+                        dbc.NavItem(dbc.NavLink("MATCH ANALYSIS", href="#matches", id="matches-link")),
+                        dbc.NavItem(dbc.NavLink("FIGHTER COMPARISON", href="#comparison", id="comparison-link")),
+                    ],
+                    className="ms-auto",
+                    navbar=True,
+                ),
+            ]
+        ),
+        color="dark",
+        dark=True,
+        className="mb-4",
+    )
+
+    content = html.Div(
+        create_fighters_tab(fighters_df),  # Default to fighter stats tab
+        id="page-content"
+    )
+
+    layout = html.Div([
+        navbar,
+        content,
+        dcc.Store(id='active-tab', data='fighters')
+    ])
+    
     return layout
