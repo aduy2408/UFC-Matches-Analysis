@@ -1,0 +1,54 @@
+/* Main dropdown box */
+.Select-control {
+    background-color: #222 !important;
+    border: 1px solid #555 !important;
+    border-radius: 8px !important;
+    box-shadow: 0px 2px 10px rgba(255, 0, 0, 0.3) !important;
+    color: white !important;
+    font-size: 16px !important;
+    padding: 8px !important;
+}
+
+/* The actual dropdown menu */
+.VirtualizedSelectOption {
+    background-color: #333 !important;
+    border: 1px solid #555 !important;
+}
+
+/* Style the text inside dropdown */
+.VirtualizedSelectFocusedOption {
+    color: white !important;
+    font-size: 16px !important;
+}
+
+/* Hover effect */
+.VirtualizedSelectOption:hover {
+    background-color: red !important;
+    color: white !important;
+}
+
+/* Style the selected value text */
+.SingleValue {
+    color: white !important;  /* Ensure text is white */
+    font-size: 16px !important;  /* Make it more readable */
+    font-weight: bold !important;  /* Make it stand out */
+    padding-left: 8px !important;  /* Add some padding */
+}
+
+/* Style the placeholder text (before selection) */
+.css-1wa3eu0-placeholder {
+    color: #bbb !important;  /* Light gray for better readability */
+    font-size: 16px !important;
+    font-style: italic !important;
+}
+
+/* Improve dropdown arrow */
+.css-1hb7zxy-IndicatorsContainer {
+    color: white !important; /* Make dropdown arrow white */
+}
+
+/* Improve background and border of the dropdown */
+.css-1uccc91-singleValue {
+    color: white !important;
+}
+
