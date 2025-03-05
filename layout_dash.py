@@ -84,6 +84,57 @@ def create_fighters_tab(fighters_df):
                 ])
             )
         ],className="mb-4"),
+        
+        dbc.Card([
+            dbc.CardHeader(html.H5("FIGHT MOMENTUM ANALYSIS", className="text-center")),
+            dbc.CardBody([
+                dbc.Row([
+                    dbc.Col(dcc.Graph(id="momentum-gauge"), width=4),
+                    dbc.Col(dcc.Graph(id="momentum-radar"), width=8),
+                ]),
+                dbc.Row([
+                    dbc.Col([
+                        html.Label("Select Metrics Weighting:"),
+                        dcc.Slider(
+                            id='strike-weight',
+                            min=0,
+                            max=100,
+                            value=40,
+                            marks={0: 'Strikes', 100: 'Grappling'},
+                            tooltip={"placement": "bottom"}
+                        )
+                    ], width=12)
+                ]),
+            ]),
+        ],className="mb-4"),
+
+        
+        # dbc.Card(
+        #     [
+        #         dbc.CardHeader(
+        #             html.H4("CAREER TIMELINE", className="text-danger mb-0"),
+        #         ),
+        #         dbc.CardBody([
+        #             dbc.Row([
+        #                 dbc.Col([
+        #                     dcc.Graph(
+        #                         id="career-timeline",
+        #                         config={'displayModeBar': False},
+        #                         className="border rounded-3",
+        #                         style={'height': '400px'}
+        #                     )
+        #                 ])
+        #             ]),
+        #             dbc.Row([
+        #                 dbc.Col([
+        #                     html.Small(
+        #                         "Hover over points to view fight details",
+        #                         className="text-muted mt-2 d-block"
+        #                     )
+        #                 ], className="text-center")
+        #             ])
+        #         ])
+        #     ]),
         dbc.Row([
             dbc.Col([
                 dbc.Card([
@@ -94,6 +145,7 @@ def create_fighters_tab(fighters_df):
                 ]),
             ]),
         ]),
+
     ])
 
 def create_matches_tab(stats_df):
@@ -162,6 +214,9 @@ def create_matches_tab(stats_df):
                 ]),
             ], width=6),
         ]),
+        
+        
+
     ])
 
 def create_comparison_tab(fighters_df):
@@ -245,15 +300,15 @@ def create_comparison_tab(fighters_df):
                         html.Div(id="head-to-head-content")
                     )
                 ]),
-            ], width=4),
-            dbc.Col([
-                dbc.Card([
-                    dbc.CardHeader(html.H5("PERFORMANCE HISTORY", className="text-center")),
-                    dbc.CardBody(
-                        dcc.Graph(id="performance-history", style={"height": "300px"})
-                    )
-                ]),
-            ], width=8),
+            ], width=100),
+            # dbc.Col([
+            #     dbc.Card([
+            #         dbc.CardHeader(html.H5("PLACE HOLDER", className="text-center")),
+            #         dbc.CardBody(
+            #             dcc.Graph(id="IDK", style={"height": "300px"})
+            #         )
+            #     ]),
+            # ], width=8),
         ]),
     ])
 
@@ -265,7 +320,7 @@ def create_layout_2(fighters_df, stats_df):
                     dbc.Row(
                         [
                             dbc.Col(html.Img(src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/UFC_Logo.svg/2560px-UFC_Logo.svg.png", height="50px")),
-                            dbc.Col(html.H3("UFC ANALYTICS", className="ms-3 text-light"), width='auto',style = {"white-space": "nowrap"}),
+                            dbc.Col(html.H3("UFC ANALYTICS", className="ms-3 text-light"), width='auto',style = {"white-space": "nowrap","color":"#ff0000"}),
                         ],
                         align="center",
                     ),

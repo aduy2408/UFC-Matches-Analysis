@@ -289,6 +289,93 @@ def register_callbacks_2(app,fighters_df,results_df,stats_df):
         return fig
     
     
+    @app.callback(
+        [Output('momentum-gauge', 'figure'),
+        Output('momentum-radar', 'figure')],
+        [Input('fighter-dropdown', 'value'),
+        Input('strike-weight', 'value')]
+    )
+    def update_momentum_analysis(selected_fighter, strike_weight):
+        fighter_data = fighters_df[fighters_df['Name'] == selected_fighter].iloc[0]
+        
+        max_sig_strikes = fighters_df['Sig_Strikes_Per Min'].max()  
+        max_takedowns = fighters_df['Takedown_Avg_Per Min'].max()   
+        max_submissions = fighters_df['Sub_Avg_Per_Min'].max() 
+        
+        normalized_sig_strikes = (fighter_data['Sig_Strikes_Per Min'] / max_sig_strikes) * 100
+        normalized_takedowns = (fighter_data['Takedown_Avg_Per Min'] / max_takedowns) * 100
+        normalized_submissions = (fighter_data['Sub_Avg_Per_Min'] / max_submissions) * 100
+
+        strike_score = normalized_sig_strikes * (strike_weight / 100)
+        grapple_score = (normalized_takedowns + normalized_submissions) * ((100 - strike_weight) / 100)
+
+        total_momentum = strike_score + grapple_score
+
+
+        gauge_fig = go.Figure(go.Indicator(
+            mode="gauge+number",
+            value=total_momentum,
+            domain={'x': [0, 1], 'y': [0, 1]},
+            gauge={
+                'axis': {
+                    'range': [0, 100],
+                    'tickwidth': 1,
+                    'tickcolor': 'white',
+                    'tickfont': {'color': 'white'}
+                },
+                'bar': {'color': "#dc3545"},  # Matches Bootstrap danger color
+                'bgcolor': "rgba(30, 30, 30, 1)", 
+                'borderwidth': 2,
+                'bordercolor': "gray",
+                'steps': [
+                    {'range': [0, 40], 'color': "rgba(100, 100, 100, 0.5)"},
+                    {'range': [40, 70], 'color': "rgba(70, 70, 70, 0.5)"},
+                    {'range': [70, 100], 'color': "rgba(40, 40, 40, 0.5)"}
+                ]
+            }
+        ))
+
+        gauge_fig.update_layout(
+            font={'color': 'white', 'family': "Arial"},
+            paper_bgcolor='rgba(0, 0, 0, 0)',
+            plot_bgcolor='rgba(0, 0, 0, 0)',
+            margin=dict(l=60, r=60, t=40, b=40)  # Same as radar chart
+        )
+
+        # Create radar chart
+        radar_fig = go.Figure()
+        radar_fig.add_trace(go.Scatterpolar(
+            r=[fighter_data['Sig_Strikes_Per Min'],
+            fighter_data['Takedown_Avg_Per Min'],
+            fighter_data['Sub_Avg_Per_Min'],
+            fighter_data['Knockdown_Avg'],
+            fighter_data['Sig_Str_Def']],
+            theta=['Strikes/Min', 'Takedowns/Min', 
+                'Sub Attempts/Min', 'Knockdowns', 'Defense'],
+            fill='toself',
+            name='Momentum Factors'
+        ))
+        radar_fig.update_layout(
+            polar=dict(
+                bgcolor="rgba(30, 30, 30, 1)",
+                radialaxis=dict(
+                    visible=True,
+                    range=[0, 10]
+                )
+            ),
+            showlegend=False,
+            title=f"{selected_fighter}",
+            title_x=0.5,
+            margin=dict(l=60, r=60, t=40, b=40),
+            paper_bgcolor='rgba(0, 0, 0, 0)',
+            plot_bgcolor='rgba(0, 0, 0, 0)',
+            font=dict(color='white')
+        )     
+        return gauge_fig, radar_fig
+    
+    
+
+    
 ### ---------------------MATCHES CALLBACKS----------------------------------- ###
 ### ------------------------------------------------------------------------- ###
 
@@ -536,7 +623,7 @@ def register_callbacks_2(app,fighters_df,results_df,stats_df):
             font=dict(color="white"),  # White text
         legend=dict(
             font=dict(size=14, color="white"),
-            bgcolor="rgba(50, 50, 50, 0.5)"  # Slightly transparent legend background
+            bgcolor="rgba(50, 50, 50, 0.5)"  
         )
         )
         return fig
