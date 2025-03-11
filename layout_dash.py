@@ -9,7 +9,7 @@ import numpy as np
 
 
 
-def create_fighters_tab(fighters_df):
+def create_fighters_tab(fighters_df,results_df,stats_df):
     return dbc.Container([
         dbc.Row([
             dbc.Col([
@@ -148,7 +148,7 @@ def create_fighters_tab(fighters_df):
 
     ])
 
-def create_matches_tab(stats_df):
+def create_matches_tab(fighters_df,stats_df,results_df):
     return dbc.Container([
         dbc.Row([
             dbc.Col([
@@ -201,7 +201,7 @@ def create_matches_tab(stats_df):
                 dbc.Card([
                     dbc.CardHeader(html.H5("STRIKE DISTRIBUTION", className="text-center")),
                     dbc.CardBody(
-                        dcc.Graph(id="strike-distribution", style={"height": "500px"})
+                        dcc.Graph(id="strike-distribution", style={"height": "600px"})
                     )
                 ]),
             ], width=6),
@@ -209,17 +209,44 @@ def create_matches_tab(stats_df):
                 dbc.Card([
                     dbc.CardHeader(html.H5("Takedown Analysis", className="text-center")),
                     dbc.CardBody(
-                        dcc.Graph(id="takedown-analysis", style={"height": "500px"})
+                        dcc.Graph(id="takedown-analysis", style={"height": "600px"})
                     )
                 ]),
             ], width=6),
-        ]),
         
         
-
+        
+        ],className="mb-4"),
+                
+        dbc.Row([
+            dbc.Col([
+                dbc.Card([
+                    dbc.CardHeader(html.H5("ROUND-BY-ROUND PROGRESSION", className="text-center")),
+                    dbc.CardBody([
+                        html.P("Select round to view progression:", className="text-white"),
+                        dcc.Slider(
+                            id='timeline-slider',
+                            min=1,
+                            max=5,  
+                            step=1,
+                            value=3,  
+                            marks={i: {'label': f'R{i}', 'style': {'color': 'white'}} 
+                                for i in range(1, 6)},
+                            className="mb-4"
+                        ),
+                        dcc.Graph(id="fight-timeline", style={"height": "400px"}),
+                        html.Hr(style={"background-color": "gray", "height": "2px"}),
+                        html.H5("STRIKE DISTRIBUTION PER ROUND", className="text-center mt-3"),
+                        dcc.Graph(id="fight-round-distribution", style={"height": "400px"})  
+                    ])
+                ]),
+            ], width=12),
+        ], className="mb-4"),
+        
+        
     ])
 
-def create_comparison_tab(fighters_df):
+def create_comparison_tab(fighters_df,results_df,stats_df):
     return dbc.Container([
         dbc.Row([
             dbc.Col([
@@ -243,12 +270,12 @@ def create_comparison_tab(fighters_df):
             ], className="mb-4"),
         
         dbc.Card([
-            dbc.CardHeader(html.H5("Fighters Overview", className="text-center")),  # Main title inside the card
+            dbc.CardHeader(html.H5("Fighters Overview", className="text-center")), 
             dbc.CardBody(
                 dbc.Row([
                     dbc.Col([
                         dbc.Card([
-                            dbc.CardHeader(html.H5("Fighter 1", className="text-center")),  # Title for the first column
+                            dbc.CardHeader(html.H5("Fighter 1", className="text-center")),  
                         dbc.CardBody(
                             html.Div(id="fighter-1-overview")
                             )
@@ -264,13 +291,13 @@ def create_comparison_tab(fighters_df):
                             "display": "flex",
                             "height": "100%",
                             "align-items": "center",
-                            "justify-content": "center"}),  # Centering the image
+                            "justify-content": "center"}),  
                     ], width=4), 
                     
                     
                     dbc.Col([
                         dbc.Card([
-                            dbc.CardHeader(html.H5("Fighter 2", className="text-center")),  # Title for the second column
+                            dbc.CardHeader(html.H5("Fighter 2", className="text-center")),  
                         dbc.CardBody(
                             html.Div(id="fighter-2-overview")
                             )
@@ -312,7 +339,126 @@ def create_comparison_tab(fighters_df):
         ]),
     ])
 
-def create_layout_2(fighters_df, stats_df):
+def matches_predictions_tab(fighters_df,stats_df,results_df):
+    return dbc.Container([
+        
+        dbc.Row([
+            dbc.Col([
+                html.H4("SELECT FIGHTER 1", className="text-danger"),
+                dcc.Dropdown(
+                    id='predict-fighter1-dropdown',
+                    options=[{'label': name, 'value': name} for name in fighters_df['Name']],
+                    value=fighters_df['Name'][0],
+                    className="mb-4"
+                ),
+            ], width=4),
+        dbc.Col([
+            html.H4("SELECT FIGHTER 2", className="text-danger"),
+            dcc.Dropdown(
+                id='predict-fighter2-dropdown',
+                options=[{'label': name, 'value': name} for name in fighters_df['Name']],
+                value=fighters_df['Name'][1],
+                className="mb-4"
+            ),
+                ], width=4),
+        dbc.Col([
+            html.Div([
+                html.H4("\u00A0", className="text-danger"),
+                dbc.Button(
+                    "PREDICT WINNER", 
+                    id="predict-button", 
+                    color="danger", 
+                    size="lg",
+                    className="mb-4"
+                ),
+            ], className="d-flex flex-column")
+            ], width=4),
+        ], className="mb-4"),
+        
+        dbc.Card([
+            dbc.CardHeader(html.H5("FIGHTERS TO PREDICT", className="text-center")), 
+            dbc.CardBody(
+                dbc.Row([
+                    dbc.Col([
+                        dbc.Card([
+                            dbc.CardHeader(html.H5("Fighter 1", className="text-center")),  
+                        dbc.CardBody(
+                            html.Div(id="fighter-1-overview-predict")
+                            )
+                        ]),
+                    ], width=4),  
+                    
+                    
+                    dbc.Col([
+                        html.Div([
+                            html.Img(src='https://res.cloudinary.com/da7h9bpnj/image/upload/v1740722018/Pngtree_vs_624541_ty55wp.png', className="img-fluid",
+                                     style={"max-width": "60%", "height": "auto"})
+                        ],style={
+                            "display": "flex",
+                            "height": "100%",
+                            "align-items": "center",
+                            "justify-content": "center"}),  
+                    ], width=4), 
+                    
+                    
+                    dbc.Col([
+                        dbc.Card([
+                            dbc.CardHeader(html.H5("Fighter 2", className="text-center")),  
+                        dbc.CardBody(
+                            html.Div(id="fighter-2-overview-predict")
+                            )
+                        ]),
+                    ], width=4), 
+                ])
+            )
+        ],className="mb-4"),
+        
+        dbc.Card([
+            dbc.CardHeader([
+                html.H5("FIGHT PREDICTION", className="text-center"),
+                html.P("Prediction is based on historical UFC data, output is the result of fighter 1", className="text-center text-muted mb-0")
+            ]), 
+            dbc.CardBody([
+                html.Div(id="prediction-output", className="mb-4"),
+                
+                dbc.Spinner(
+                    html.Div(id="prediction-loading", style={"height": "20px"}),
+                    color="danger",
+                    type="grow",
+                    fullscreen=False,
+                ),
+                
+            ])
+        ], className="mb-4"),
+        dbc.Card([
+            dbc.CardHeader(html.H5("MODEL INFORMATION", className="text-center")),
+            dbc.CardBody([
+                dbc.Row([
+                    dbc.Col([
+                        html.H6("Model Type:", className="text-center mb-2"),
+                        html.P(id="model-type-info", className="text-center text-muted"),
+                    
+                    ], width=6),
+                    dbc.Col([
+                        html.H6("Model Accuracy:", className="text-center mb-2"),
+                        html.P(id="model-accuracy-info", className="text-center text-muted"),
+                        
+
+                    ], width=6),
+                ]),
+                dbc.Row([
+                    dbc.Col([
+                        html.H6("Disclaimer:", className="text-center mb-2 mt-3"),
+                        html.P("Predictions are for entertainment purposes only and should not be used for betting(or..)", 
+                              className="text-center text-muted fst-italic")
+                ],width=100),
+                ])
+            ])
+        ])
+    ])
+
+
+def create_layout_2(fighters_df, results_df,stats_df):
     navbar = dbc.Navbar(
         dbc.Container(
             [
@@ -320,7 +466,7 @@ def create_layout_2(fighters_df, stats_df):
                     dbc.Row(
                         [
                             dbc.Col(html.Img(src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/UFC_Logo.svg/2560px-UFC_Logo.svg.png", height="50px")),
-                            dbc.Col(html.H3("UFC ANALYTICS", className="ms-3 text-light"), width='auto',style = {"white-space": "nowrap","color":"#ff0000"}),
+                            # dbc.Col(html.H3("UFC ANALYTICS", className="ms-3 text-light"), width='auto',style = {"white-space": "nowrap","color":"#ff0000"}),
                         ],
                         align="center",
                     ),
@@ -331,6 +477,7 @@ def create_layout_2(fighters_df, stats_df):
                         dbc.NavItem(dbc.NavLink("FIGHTER STATS", href="#fighters", id="fighters-link")),
                         dbc.NavItem(dbc.NavLink("MATCH ANALYSIS", href="#matches", id="matches-link")),
                         dbc.NavItem(dbc.NavLink("FIGHTER COMPARISON", href="#comparison", id="comparison-link")),
+                        dbc.NavItem(dbc.NavLink("MATCH PREDICTIONS", href="#prediction", id="prediction-link")),
                     ],
                     className="ms-auto",
                     navbar=True,
@@ -343,7 +490,7 @@ def create_layout_2(fighters_df, stats_df):
     )
 
     content = html.Div(
-        create_fighters_tab(fighters_df),  # Default to fighter stats tab
+        create_fighters_tab(fighters_df=fighters_df,results_df=results_df,stats_df=stats_df), 
         id="page-content"
     )
 
