@@ -40,7 +40,7 @@ def register_comparison_callbacks(app, fighters_df, results_df, stats_df):
             theta=categories,
             fill='toself',
             name=fighter1_name,
-            fillcolor='rgba(255, 0, 0, 0.3)',  # Red with transparency
+            fillcolor='rgba(255, 0, 0, 0.3)',  
             line=dict(color='red', width=3),
             marker=dict(size=6)
         ))
@@ -51,7 +51,7 @@ def register_comparison_callbacks(app, fighters_df, results_df, stats_df):
             theta=categories,
             fill='toself',
             name=fighter2_name,
-            fillcolor='rgba(0, 0, 255, 0.3)',  # Blue with transparency
+            fillcolor='rgba(0, 0, 255, 0.3)',  
             line=dict(color='blue', width=3),
             marker=dict(size=6)
         ))

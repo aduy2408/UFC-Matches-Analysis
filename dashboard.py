@@ -17,7 +17,7 @@ results_df = pd.read_csv('/home/duyle/Documents/VSC/Project_DAP391/processed_dat
 fighters_df['Name'] = fighters_df['Name'].str.strip().str.lower()
 stats_df['ROUND'] = stats_df['ROUND'].str.replace('Round ','')
 results_df['DATE'] = pd.to_datetime(results_df['DATE'])
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.CYBORG])
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.CYBORG,dbc.icons.FONT_AWESOME])
 
 #layout
 app.layout = create_layout_2(fighters_df,results_df,stats_df)  
@@ -26,4 +26,4 @@ app.layout = create_layout_2(fighters_df,results_df,stats_df)
 register_callbacks(app, fighters_df, results_df,stats_df)
 
 if __name__ == '__main__':
-    app.run_server(host='127.0.0.9',port=4455,debug=True)
+    app.run_server(host='127.0.0.9',port=4455,debug=False)

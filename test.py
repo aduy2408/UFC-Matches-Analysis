@@ -1,95 +1,192 @@
 import dash
-from dash import html, dcc
-from dash.dependencies import Input, Output
-import plotly.express as px
+from dash import html, dcc, Input, Output, clientside_callback
+import dash_bootstrap_components as dbc
 
 # Initialize the Dash app
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-# Sample data for fighters (placeholder)
-fighter_stats = {
-    "Fighter 1": {"Wins": 15, "Losses": 2, "KO": 10},
-    "Fighter 2": {"Wins": 12, "Losses": 3, "KO": 8},
-    "Fighter 3": {"Wins": 9, "Losses": 1, "KO": 5}
-}
-
-# Layout of the dashboard
-app.layout = html.Div(style={'fontFamily': 'Arial, sans-serif'}, children=[
-    # Header Section
+# App layout
+app.layout = html.Div([
+    # Navigation bar
     html.Div([
-        html.Img(src='https://via.placeholder.com/50', style={'float': 'left', 'marginRight': '10px'}),
-        html.H1("AUSSIE BUCKETS", style={'color': '#000', 'margin': '0', 'display': 'inline'}),
-        html.P("SAY NO TO MARKUPS", style={'color': '#f1c40f', 'margin': '0', 'display': 'inline'}),
-        html.Ul([
-            html.Li(html.A("Products", href="#"), style={'display': 'inline', 'marginRight': '20px'}),
-            html.Li(html.A("Industries", href="#"), style={'display': 'inline', 'marginRight': '20px'}),
-            html.Li(html.A("Testimonials", href="#"), style={'display': 'inline', 'marginRight': '20px'}),
-            html.Li(html.A("Finance", href="#"), style={'display': 'inline', 'marginRight': '20px'}),
-            html.Li(html.A("Why AB?", href="#"), style={'display': 'inline', 'marginRight': '20px'}),
-            html.Li(html.A("Contact", href="#"), style={'display': 'inline', 'marginRight': '20px'}),
-            html.Li(html.Button("Quick Quote", style={'backgroundColor': '#f1c40f', 'border': 'none', 'padding': '5px 10px', 'cursor': 'pointer'}))
-        ], style={'listStyleType': 'none', 'margin': '0', 'padding': '10px', 'overflow': 'hidden', 'backgroundColor': '#fff'})
-    ], style={'borderBottom': '2px solid #f1c40f', 'padding': '10px'}),
-
-    # Main Section
-    html.Div([
-        html.Img(src='https://via.placeholder.com/1200x400', style={'width': '100%', 'height': 'auto'}),
-        html.H2("THE LARGEST SUPPLIER OF EXCAVATOR ATTACHMENTS IN AUSTRALIA", 
-                style={'color': '#f1c40f', 'textAlign': 'center', 'margin': '20px 0'}),
-        html.P("As the leading supplier of attachments in Australia, we use modern technology and superior materials to exceed your expectations.", 
-               style={'textAlign': 'center', 'maxWidth': '600px', 'margin': '0 auto'}),
         html.Div([
-            html.Button("Quick Quote", style={'backgroundColor': '#f1c40f', 'border': 'none', 'padding': '10px 20px', 'marginRight': '10px'}),
-            html.Button("Full Range", style={'backgroundColor': '#333', 'color': '#fff', 'border': 'none', 'padding': '10px 20px'})
-        ], style={'textAlign': 'center', 'margin': '20px 0'})
-    ], style={'backgroundColor': '#f5f5f5', 'padding': '20px'}),
-
-    # Brands Section
-    html.Div([
-        html.Img(src='https://via.placeholder.com/100', alt="Caterpillar", style={'margin': '10px'}),
-        html.Img(src='https://via.placeholder.com/100', alt="Yanmar", style={'margin': '10px'}),
-        html.Img(src='https://via.placeholder.com/100', alt="Komatsu", style={'margin': '10px'}),
-        html.Img(src='https://via.placeholder.com/100', alt="Case", style={'margin': '10px'}),
-        html.Img(src='https://via.placeholder.com/100', alt="JCB", style={'margin': '10px'}),
-        html.Img(src='https://via.placeholder.com/100', alt="John Deere", style={'margin': '10px'})
-    ], style={'textAlign': 'center', 'margin': '20px 0'}),
-
-    # Product Categories
-    html.Div([
-        html.H3("Browse Our Expansive Range Of Excavator Buckets, Grabs And Attachments", 
-                style={'color': '#e74c3c', 'textAlign': 'center'}),
-        html.P("Aussie Buckets was born out of a necessity to provide hard-working Australians with quality products at a fair and honest price. We offer a comprehensive range of high-quality, 100% purpose-built products, making our heavy equipment the ultimate choice for all Australian operators.", 
-               style={'textAlign': 'center', 'maxWidth': '600px', 'margin': '0 auto 20px'}),
+            html.Img(src='assets/logo.png', style={'height': '28px', 'marginRight': '10px'}),
+            html.Span("Dash BC", style={'fontWeight': '600', 'fontSize': '18px'})
+        ], style={'display': 'flex', 'alignItems': 'center'}),
+        
         html.Div([
-            html.Div([
-                html.Img(src='https://via.placeholder.com/200', style={'width': '100%'}),
-                html.P("Excavator Buckets")
-            ], style={'display': 'inline-block', 'width': '30%', 'textAlign': 'center', 'margin': '10px'}),
-            html.Div([
-                html.Img(src='https://via.placeholder.com/200', style={'width': '100%'}),
-                html.P("Excavator Grabs")
-            ], style={'display': 'inline-block', 'width': '30%', 'textAlign': 'center', 'margin': '10px'}),
-            html.Div([
-                html.Img(src='https://via.placeholder.com/200', style={'width': '100%'}),
-                html.P("Excavator Attachments")
-            ], style={'display': 'inline-block', 'width': '30%', 'textAlign': 'center', 'margin': '10px'})
-        ])
-    ], style={'padding': '20px'}),
-
-    # Fighter Statistics Section (instead of news)
-    html.Div([
-        html.H3("Fighter Statistics", style={'textAlign': 'center', 'color': '#2c3e50'}),
+            html.A("Features", href="#", style={'textDecoration': 'none', 'color': '#333', 'fontWeight': '500', 'marginRight': '30px'}),
+            html.A("Models", href="#", style={'textDecoration': 'none', 'color': '#333', 'fontWeight': '500', 'marginRight': '30px'}),
+            html.A("Pricing", href="#", style={'textDecoration': 'none', 'color': '#333', 'fontWeight': '500'}),
+        ], style={'display': 'flex'}),
+        
         html.Div([
+            html.Button("Log in", style={
+                'background': 'none',
+                'border': 'none',
+                'cursor': 'pointer',
+                'padding': '8px 16px',
+                'fontWeight': '500',
+                'marginRight': '15px'
+            }),
+            html.Button("Get Started", style={
+                'backgroundColor': '#111',
+                'color': 'white',
+                'border': 'none',
+                'borderRadius': '6px',
+                'padding': '8px 16px',
+                'fontWeight': '500',
+                'cursor': 'pointer'
+            }),
+        ], style={'display': 'flex'}),
+    ], style={
+        'display': 'flex',
+        'justifyContent': 'space-between',
+        'alignItems': 'center',
+        'padding': '20px 0',
+        'borderBottom': '1px solid #f0f0f0'
+    }),
+    
+    # Hero section
+    html.Div([
+        html.Div([
+            # Main title
+            html.H1([
+                html.Span("Dash", style={'color': '#333'}),
+                html.Span(" BC", style={'color': '#6440A4'})
+            ], style={
+                'fontSize': '72px',
+                'fontWeight': '700',
+                'marginBottom': '20px'
+            }),
+            
+            # Subtitle with typing effect (static version first)
+            html.H2(id='typing-text', style={
+                'fontSize': '36px',
+                'fontWeight': '600',
+                'marginBottom': '30px',
+                'minHeight': '50px'
+            }),
+
+            # Static paragraph
+            html.P("Experience data visualization with lightning-fast responses. Access top visualization models from one unified interface.", style={
+                'fontSize': '18px',
+                'color': '#666',
+                'marginBottom': '40px',
+                'lineHeight': '1.6'
+            }),
+            
+            # Buttons
             html.Div([
-                html.H4(fighter, style={'textAlign': 'center'}),
-                html.P(f"Wins: {stats['Wins']}", style={'textAlign': 'center'}),
-                html.P(f"Losses: {stats['Losses']}", style={'textAlign': 'center'}),
-                html.P(f"KO: {stats['KO']}", style={'textAlign': 'center'})
-            ], style={'display': 'inline-block', 'width': '30%', 'margin': '10px', 'border': '1px solid #ddd', 'padding': '10px'})
-            for fighter, stats in fighter_stats.items()
-        ])
-    ], style={'padding': '20px', 'backgroundColor': '#ecf0f1'})
-])
+                html.Button("Try for Free →", style={
+                    'backgroundColor': '#111',
+                    'color': 'white',
+                    'border': 'none',
+                    'borderRadius': '6px',
+                    'padding': '12px 24px',
+                    'fontWeight': '500',
+                    'cursor': 'pointer',
+                    'marginRight': '20px'
+                }),
+                html.Button("See the Demo", style={
+                    'background': 'none',
+                    'border': '1px solid #ddd',
+                    'borderRadius': '6px',
+                    'padding': '12px 24px',
+                    'fontWeight': '500',
+                    'cursor': 'pointer'
+                }),
+            ], style={'display': 'flex', 'justifyContent': 'center'}),
+        ], style={
+            'maxWidth': '800px',
+            'textAlign': 'center'
+        })
+    ], style={
+        'display': 'flex',
+        'justifyContent': 'center',
+        'alignItems': 'center',
+        'minHeight': '70vh',
+        'padding': '40px 0'
+    }),
+    
+    # Add the necessary JavaScript to the page
+    html.Script(id='typing-script')
+], style={
+    'fontFamily': "'Inter', sans-serif",
+    'width': '100%',
+    'maxWidth': '1200px',
+    'margin': '0 auto',
+    'padding': '0 20px'
+})
+
+# Create app.clientside_callback to inject JavaScript code
+app.clientside_callback(
+    """
+    function(n_intervals) {
+        const text = "Lightning-fast data visualization for everyone.";
+        const typingElement = document.getElementById('typing-text');
+        
+        // Set default content in case JavaScript fails
+        if (!typingElement.innerText) {
+            typingElement.innerText = text;
+        }
+        
+        // Define typing function
+        let i = 0;
+        function typeWriter() {
+            typingElement.innerHTML = "";
+            if (i < text.length) {
+                typingElement.innerHTML += text.substring(0, i+1);
+                i++;
+                setTimeout(typeWriter, 50);
+            }
+        }
+        
+        // Only run once when page loads
+        if (typingElement && n_intervals === 0) {
+            typingElement.innerHTML = ""; // Clear initial text
+            setTimeout(typeWriter, 500);
+        }
+        
+        return window.dash_clientside.no_update;
+    }
+    """,
+    Output('typing-script', 'children'),
+    Input('typing-text', 'id')
+)
+
+# Set the initial text for non-JS browsers or before JS loads
+app.clientside_callback(
+    """
+    function(n_intervals) {
+        return "Lightning-fast data visualization for everyone.";
+    }
+    """,
+    Output('typing-text', 'children'),
+    Input('typing-text', 'id')
+)
+
+# Add custom head tags for fonts
+app.index_string = '''
+<!DOCTYPE html>
+<html>
+    <head>
+        {%metas%}
+        <title>Dash BC - Data Visualization Platform</title>
+        {%favicon%}
+        {%css%}
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        {%app_entry%}
+        <footer>
+            {%config%}
+            {%scripts%}
+            {%renderer%}
+        </footer>
+    </body>
+</html>
+'''
 
 # Run the app
 if __name__ == '__main__':

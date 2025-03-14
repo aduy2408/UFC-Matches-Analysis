@@ -436,12 +436,12 @@ def matches_predictions_tab(fighters_df,stats_df,results_df):
                 dbc.Row([
                     dbc.Col([
                         html.H6("Model Type:", className="text-center mb-2"),
-                        html.P(id="model-type-info", className="text-center text-muted"),
+                        html.P("Gradient Boosting", className="text-center text-muted"),
                     
                     ], width=6),
                     dbc.Col([
                         html.H6("Model Accuracy:", className="text-center mb-2"),
-                        html.P(id="model-accuracy-info", className="text-center text-muted"),
+                        html.P("63.2%", className="text-center text-muted"),
                         
 
                     ], width=6),
