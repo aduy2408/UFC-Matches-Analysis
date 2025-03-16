@@ -458,6 +458,26 @@ def matches_predictions_tab(fighters_df,stats_df,results_df):
     ])
 
 
+def create_landing_page():
+    return dbc.Container([
+        dbc.Row([
+            dbc.Col([
+                html.H1("UFC TOURNAMENT ANALYSIS", 
+                    className="text-center display-1 gradient-text mt-8 pt-5 mb-4"),
+                html.Div(
+                    "The work of group 5..", 
+                    className="text-center typewriter-text fs-3 mb-5"
+                ),
+                html.Div([
+                    html.P("Welcome to our UFC Analytics Dashboard - your gateway to comprehensive UFC fight analysis and predictions.", 
+                        className="text-center fs-5 mb-2"),
+                    html.P("Explore detailed fighter statistics, match analysis, head-to-head comparisons, and machine learning fight predictions.", 
+                        className="text-center fs-5")
+                ], className="overview-text mt-4")
+            ], width=12)
+        ], className="justify-content-center align-items-center min-vh-80 pt-5")
+    ], className="h-100 pt-5")
+
 def create_layout_2(fighters_df, results_df,stats_df):
     navbar = dbc.Navbar(
         dbc.Container(
@@ -474,6 +494,7 @@ def create_layout_2(fighters_df, results_df,stats_df):
                 ),
                 dbc.Nav(
                     [
+                        dbc.NavItem(dbc.NavLink("HOME", href="#home", id="home-link")),
                         dbc.NavItem(dbc.NavLink("FIGHTER STATS", href="#fighters", id="fighters-link")),
                         dbc.NavItem(dbc.NavLink("MATCH ANALYSIS", href="#matches", id="matches-link")),
                         dbc.NavItem(dbc.NavLink("FIGHTER COMPARISON", href="#comparison", id="comparison-link")),
@@ -490,7 +511,7 @@ def create_layout_2(fighters_df, results_df,stats_df):
     )
 
     content = html.Div(
-        create_fighters_tab(fighters_df=fighters_df,results_df=results_df,stats_df=stats_df), 
+        create_landing_page(), 
         id="page-content"
     )
 
@@ -501,7 +522,7 @@ def create_layout_2(fighters_df, results_df,stats_df):
         ),
         navbar,
         content,
-        dcc.Store(id='active-tab', data='fighters')
+        dcc.Store(id='active-tab', data='home')
     ])
     
     return layout

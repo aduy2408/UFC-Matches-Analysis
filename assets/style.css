@@ -1,3 +1,6 @@
+/* Import Google Fonts - you can change these to other fonts */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,600;1,600&display=swap');
+
 /* Main dropdown box */
 .Select-control {
     background-color: #222 !important;
@@ -9,46 +12,79 @@
     padding: 8px !important;
 }
 
-/* The actual dropdown menu */
 .VirtualizedSelectOption {
     background-color: #333 !important;
     border: 1px solid #555 !important;
 }
 
-/* Style the text inside dropdown */
-.VirtualizedSelectFocusedOption {
-    color: white !important;
-    font-size: 16px !important;
+.gradient-text {
+    font-family: 'Open Sans';  
+    font-weight: 700;  
+    letter-spacing: 2px; 
+    
+    background: linear-gradient(45deg, 
+        #5c0404 0%, 
+        #640202 25%, 
+        #910505 50%, 
+        #ad0404 75%, 
+        #5c0404 100%);
+    
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 4s ease infinite;
+
 }
 
-/* Hover effect */
-.VirtualizedSelectOption:hover {
-    background-color: red !important;
-    color: white !important;
+@keyframes shine {
+    from {
+        background-position: 0% center;
+    }
+    to {
+        background-position: 300% center;
+    }
 }
 
-/* Style the selected value text */
-.SingleValue {
-    color: white !important;  /* Ensure text is white */
-    font-size: 16px !important;  /* Make it more readable */
-    font-weight: bold !important;  /* Make it stand out */
-    padding-left: 8px !important;  /* Add some padding */
+.typewriter-text {
+    font-family: 'Open Sans';  
+    overflow: hidden;
+    border-right: 1px solid #dc3545;
+    white-space: nowrap;
+    margin: 0 auto;
+    letter-spacing: 2px;
+    width: fit-content;
+    animation: 
+        typing 1.5s steps(80, end),
+        blink-caret 0.25s step-end infinite;
+    padding-top: 2rem;
 }
 
-/* Style the placeholder text (before selection) */
-.css-1wa3eu0-placeholder {
-    color: #ffffff !important;  /* Light gray for better readability */
-    font-size: 18px !important;
-    font-style: italic !important;
+@keyframes typing {
+    from { width: 0 }
+    to { width: 450px } 
 }
 
-/* Improve dropdown arrow */
-.css-1hb7zxy-IndicatorsContainer {
-    color: white !important; /* Make dropdown arrow white */
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: #dc3545 }
 }
 
-/* Improve background and border of the dropdown */
-.css-1uccc91-singleValue {
-    color: white !important;
+.overview-text {
+    opacity: 0;
+    animation: fadeIn 1s ease-in forwards;
+    animation-delay: 2.5s;
 }
 
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Landing page container styling */
+.min-vh-80 {
+    min-height: 70vh !important;
+    display: flex;
+    align-items: center;
+    padding-bottom: 5rem;
+}
