@@ -95,24 +95,38 @@ def register_fighter_callbacks(app, fighters_df, results_df, stats_df):
             text=[f"{cat}: {val:.2f}" for cat, val in zip(display_categories, display_values)],
             hoverinfo='text',
             line_color='red',
-            fillcolor='rgba(255, 0, 0, 0.3)'
+            line=dict(width=3),
+            fillcolor='rgba(255, 0, 0, 0.5)'
         ))
         
         fig.update_layout(
             polar=dict(
-                bgcolor="rgba(30, 30, 30, 1)",
+                bgcolor="rgba(0, 0, 0, 0)",
                 radialaxis=dict(
                     visible=True,
-                    range=[0, 1.1]
+                    range=[0, 1.1],
+                    linecolor="rgba(255, 255, 255, 0.4)",
+                    linewidth=2,
+                    tickfont=dict(size=12, color="white"),
+                    tickwidth=2,
+                    tickcolor="rgba(255, 255, 255, 0.4)"
+                ),
+                angularaxis=dict(
+                    linecolor="rgba(255, 255, 255, 0.4)",
+                    linewidth=2,
+                    tickfont=dict(size=12, color="white", weight="bold"),
+                    gridcolor="rgba(255, 255, 255, 0.2)"
                 )
             ),
             showlegend=False,
-            title=f"{selected_fighter}'s Fighting Attributes",
+            title=dict(
+                text=f"{selected_fighter}'s Fighting Attributes",
+                font=dict(size=22, color="white", weight="bold")
+            ),
             title_x=0.5,
-            margin=dict(l=60, r=60, t=40, b=40),
             paper_bgcolor='rgba(0, 0, 0, 0)',
             plot_bgcolor='rgba(0, 0, 0, 0)',
-            font=dict(color='white')
+            margin=dict(l=50, r=50, t=70, b=50)
         )
         
         return fig
@@ -192,14 +206,20 @@ def register_fighter_callbacks(app, fighters_df, results_df, stats_df):
             textfont = dict(color='white')
         ))
         fig.update_layout(
-            title = dict(text = 'Strike Distribution',
-                         font=dict(size=20, color="white")),
-            title_x = 0.5,
-            paper_bgcolor="rgba(30, 30, 30, 1)",
-            plot_bgcolor="rgba(30, 30, 30, 1)", 
+            title=dict(
+                text='Strike Distribution',
+                font=dict(size=20, color="white")
+            ),
+            title_x=0.5,
+            paper_bgcolor="rgba(0, 0, 0, 0)",
+            plot_bgcolor="rgba(0, 0, 0, 0)",
             legend=dict(
-                font=dict(size=14, color="white"),  
-                bgcolor="rgba(50, 50, 50, 0.5)" ) 
+                font=dict(size=14, color="white"),
+                bgcolor="rgba(0, 0, 0, 0)",
+                bordercolor="rgba(255, 255, 255, 0.2)",
+                borderwidth=1
+            ),
+            margin=dict(l=40, r=40, t=60, b=40)
         )
         return fig
     @app.callback(
@@ -229,14 +249,20 @@ def register_fighter_callbacks(app, fighters_df, results_df, stats_df):
             marker=dict(colors=colors, line=dict(color='white', width=1)),  
         ))
         fig.update_layout(
-            title = dict(text = 'Fighting style',
-                         font=dict(size=20, color="white")),
-            title_x = 0.5,
-            paper_bgcolor="rgba(30, 30, 30, 1)",  
-            plot_bgcolor="rgba(30, 30, 30, 1)",  
+            title=dict(
+                text='Fighting Style',
+                font=dict(size=20, color="white")
+            ),
+            title_x=0.5,
+            paper_bgcolor="rgba(0, 0, 0, 0)",
+            plot_bgcolor="rgba(0, 0, 0, 0)",
             legend=dict(
-                font=dict(size=14, color="white"),  
-                bgcolor="rgba(50, 50, 50, 0.5)" ) 
+                font=dict(size=14, color="white"),
+                bgcolor="rgba(0, 0, 0, 0)",
+                bordercolor="rgba(255, 255, 255, 0.2)",
+                borderwidth=1
+            ),
+            margin=dict(l=40, r=40, t=60, b=40)
         )
         return fig
     
@@ -272,17 +298,17 @@ def register_fighter_callbacks(app, fighters_df, results_df, stats_df):
                 'axis': {
                     'range': [0, 100],
                     'tickwidth': 1,
-                    'tickcolor': 'white',
-                    'tickfont': {'color': 'white'}
+                    'tickcolor': 'rgba(255, 255, 255, 0.5)',
+                    'tickfont': {'color': 'white'},
                 },
-                'bar': {'color': "#dc3545"},  
-                'bgcolor': "rgba(30, 30, 30, 1)", 
+                'bar': {'color': "#dc3545", 'thickness': 0.7},
+                'bgcolor': "rgba(0, 0, 0, 0)",
                 'borderwidth': 2,
-                'bordercolor': "gray",
+                'bordercolor': "rgba(255, 255, 255, 0.2)",
                 'steps': [
-                    {'range': [0, 40], 'color': "rgba(100, 100, 100, 0.5)"},
-                    {'range': [40, 70], 'color': "rgba(70, 70, 70, 0.5)"},
-                    {'range': [70, 100], 'color': "rgba(40, 40, 40, 0.5)"}
+                    {'range': [0, 40], 'color': "rgba(220, 53, 69, 0.1)"},
+                    {'range': [40, 70], 'color': "rgba(220, 53, 69, 0.2)"},
+                    {'range': [70, 100], 'color': "rgba(220, 53, 69, 0.3)"}
                 ]
             }
         ))
@@ -298,29 +324,53 @@ def register_fighter_callbacks(app, fighters_df, results_df, stats_df):
         radar_fig = go.Figure()
         radar_fig.add_trace(go.Scatterpolar(
             r=[fighter_data['Sig_Strikes_Per Min'],
-            fighter_data['Takedown_Avg_Per Min'],
-            fighter_data['Sub_Avg_Per_Min'],
-            fighter_data['Knockdown_Avg'],
-            fighter_data['Sig_Str_Def']],
+              fighter_data['Takedown_Avg_Per Min'],
+              fighter_data['Sub_Avg_Per_Min'],
+              fighter_data['Knockdown_Avg'],
+              fighter_data['Sig_Str_Def']],
             theta=['Strikes/Min', 'Takedowns/Min', 
-                'Sub Attempts/Min', 'Knockdowns', 'Defense'],
+                  'Sub Attempts/Min', 'Knockdowns', 'Defense'],
             fill='toself',
-            name='Momentum Factors'
+            name='Momentum Factors',
+            line=dict(width=3, color='#dc3545'),
+            fillcolor='rgba(220, 53, 69, 0.5)',
+            text=[
+                f"Strikes per Min: {fighter_data['Sig_Strikes_Per Min']:.2f}",
+                f"Takedowns per Min: {fighter_data['Takedown_Avg_Per Min']:.2f}",
+                f"Submissions per Min: {fighter_data['Sub_Avg_Per_Min']:.2f}",
+                f"Knockdown Avg: {fighter_data['Knockdown_Avg']:.2f}",
+                f"Strike Defense: {fighter_data['Sig_Str_Def']:.2%}"
+            ],
+            hoverinfo='text'
         ))
         radar_fig.update_layout(
             polar=dict(
-                bgcolor="rgba(30, 30, 30, 1)",
+                bgcolor="rgba(0, 0, 0, 0)",
                 radialaxis=dict(
                     visible=True,
-                    range=[0, 10]
+                    range=[0, 10],
+                    linecolor="rgba(255, 255, 255, 0.4)",
+                    linewidth=2,
+                    tickfont=dict(size=12, color="white"),
+                    tickwidth=2,
+                    tickcolor="rgba(255, 255, 255, 0.4)",
+                    gridcolor="rgba(255, 255, 255, 0.1)"
+                ),
+                angularaxis=dict(
+                    linecolor="rgba(255, 255, 255, 0.4)",
+                    linewidth=2,
+                    tickfont=dict(size=12, color="white", weight="bold"),
+                    gridcolor="rgba(255, 255, 255, 0.1)"
                 )
             ),
             showlegend=False,
-            title=f"{selected_fighter}",
+            title=dict(
+                text=f"{selected_fighter}'s Momentum Factors",
+                font=dict(size=22, color="white", weight="bold")
+            ),
             title_x=0.5,
-            margin=dict(l=60, r=60, t=40, b=40),
             paper_bgcolor='rgba(0, 0, 0, 0)',
             plot_bgcolor='rgba(0, 0, 0, 0)',
-            font=dict(color='white')
+            margin=dict(l=50, r=50, t=70, b=50)
         )     
         return gauge_fig, radar_fig

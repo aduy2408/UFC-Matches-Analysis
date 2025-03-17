@@ -40,9 +40,11 @@ def register_comparison_callbacks(app, fighters_df, results_df, stats_df):
             theta=categories,
             fill='toself',
             name=fighter1_name,
-            fillcolor='rgba(255, 0, 0, 0.3)',  
+            fillcolor='rgba(255, 0, 0, 0.5)',  
             line=dict(color='red', width=3),
-            marker=dict(size=6)
+            marker=dict(size=8),
+            text=[f"{cat}: {fighter1[cat]:.2f}" for cat in categories],
+            hoverinfo='text'
         ))
 
         # Fighter 2 trace
@@ -51,40 +53,50 @@ def register_comparison_callbacks(app, fighters_df, results_df, stats_df):
             theta=categories,
             fill='toself',
             name=fighter2_name,
-            fillcolor='rgba(0, 0, 255, 0.3)',  
+            fillcolor='rgba(0, 0, 255, 0.5)',  
             line=dict(color='blue', width=3),
-            marker=dict(size=6)
+            marker=dict(size=8),
+            text=[f"{cat}: {fighter2[cat]:.2f}" for cat in categories],
+            hoverinfo='text'
         ))
 
         fig.update_layout(
             title=dict(
                 text=f"<b>Fighter Comparison: {fighter1_name} vs. {fighter2_name}</b>",
-                font=dict(size=18, color="white"),
+                font=dict(size=20, color="white"),
                 x=0.5
             ),
             polar=dict(
-                bgcolor="rgba(30, 30, 30, 1)",  
+                bgcolor="rgba(0, 0, 0, 0)",
                 radialaxis=dict(
                     visible=True,
                     range=[0, 1],
-                    gridcolor="white",
-                    gridwidth=1.5,
+                    gridcolor="rgba(255, 255, 255, 0.1)",
+                    linecolor="rgba(255, 255, 255, 0.2)",
                     showline=True,
-                    linewidth=1,
-                    linecolor="white"
+                    linewidth=2,
+                    tickfont=dict(size=12, color="white"),
+                    tickwidth=2,
+                    tickcolor="rgba(255, 255, 255, 0.4)"
                 ),
                 angularaxis=dict(
                     showline=True,
-                    linewidth=1,
-                    linecolor="white",
-                    tickfont=dict(size=14, color="white")
+                    linewidth=2,
+                    linecolor="rgba(255, 255, 255, 0.4)",
+                    gridcolor="rgba(255, 255, 255, 0.2)",
+                    tickfont=dict(size=12, color="white", weight="bold")
                 )
             ),
-            paper_bgcolor="rgba(20, 20, 20, 1)",  
+            paper_bgcolor="rgba(0, 0, 0, 0)",
+            plot_bgcolor="rgba(0, 0, 0, 0)",
+            font=dict(color="white"),
             legend=dict(
                 font=dict(size=14, color="white"),
-                bgcolor="rgba(50, 50, 50, 0.5)"
-            )
+                bgcolor="rgba(0, 0, 0, 0)",
+                bordercolor="rgba(255, 255, 255, 0.2)",
+                borderwidth=1
+            ),
+            margin=dict(t=60, l=40, r=40, b=40)
         )
 
         return fig

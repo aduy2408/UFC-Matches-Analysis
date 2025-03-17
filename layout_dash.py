@@ -7,6 +7,20 @@ import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
 
+# Define common plot layout settings
+plot_layout = {
+    "paper_bgcolor": "rgba(0,0,0,0)",
+    "plot_bgcolor": "rgba(0,0,0,0)",
+    "font": {"color": "#ffffff"},
+    "margin": dict(t=20, l=20, r=20, b=20),
+}
+
+# Define grid settings
+grid_settings = {
+    "gridcolor": "rgba(128, 128, 128, 0.1)",
+    "zerolinecolor": "rgba(128, 128, 128, 0.2)"
+}
+
 
 
 def create_fighters_tab(fighters_df,results_df,stats_df):
@@ -52,7 +66,7 @@ def create_fighters_tab(fighters_df,results_df,stats_df):
                 dbc.Card([
                     dbc.CardHeader(html.H5("PERFORMANCE METRICS", className="text-center")),
                     dbc.CardBody(
-                        dcc.Graph(id="fighter-radar-chart", style={"height": "400px",'backgroundColor':"rgba(50, 50, 50, 0.8)"})
+                        dcc.Graph(id="fighter-radar-chart", style={"height": "400px"})
                     )
                 ]),
             ], width=8),
@@ -68,7 +82,7 @@ def create_fighters_tab(fighters_df,results_df,stats_df):
                         dbc.Card([
                             dbc.CardHeader(html.H5("Strike Distribution", className="text-center")),  # Title for the first column
                             dbc.CardBody(
-                                dcc.Graph(id="fighter-strike-distribution", style={"height": "400px"})
+                                dcc.Graph(id="fighter-strike-distribution", style={"height": "400px", "backgroundColor": "transparent"})
                             )
                         ]),
                     ], width=6),  
@@ -77,7 +91,7 @@ def create_fighters_tab(fighters_df,results_df,stats_df):
                         dbc.Card([
                             dbc.CardHeader(html.H5("Fighting Style Analysis", className="text-center")),  # Title for the second column
                             dbc.CardBody(
-                                dcc.Graph(id="fighter-style-analysis", style={"height": "400px"})
+                                dcc.Graph(id="fighter-style-analysis", style={"height": "400px", "backgroundColor": "transparent"})
                             )
                         ]),
                     ], width=6), 
@@ -89,8 +103,8 @@ def create_fighters_tab(fighters_df,results_df,stats_df):
             dbc.CardHeader(html.H5("FIGHT MOMENTUM ANALYSIS", className="text-center")),
             dbc.CardBody([
                 dbc.Row([
-                    dbc.Col(dcc.Graph(id="momentum-gauge"), width=4),
-                    dbc.Col(dcc.Graph(id="momentum-radar"), width=8),
+                    dbc.Col(dcc.Graph(id="momentum-gauge", config={'displayModeBar': False}), width=4),
+                    dbc.Col(dcc.Graph(id="momentum-radar", config={'displayModeBar': False}), width=8),
                 ]),
                 dbc.Row([
                     dbc.Col([
@@ -108,33 +122,6 @@ def create_fighters_tab(fighters_df,results_df,stats_df):
             ]),
         ],className="mb-4"),
 
-        
-        # dbc.Card(
-        #     [
-        #         dbc.CardHeader(
-        #             html.H4("CAREER TIMELINE", className="text-danger mb-0"),
-        #         ),
-        #         dbc.CardBody([
-        #             dbc.Row([
-        #                 dbc.Col([
-        #                     dcc.Graph(
-        #                         id="career-timeline",
-        #                         config={'displayModeBar': False},
-        #                         className="border rounded-3",
-        #                         style={'height': '400px'}
-        #                     )
-        #                 ])
-        #             ]),
-        #             dbc.Row([
-        #                 dbc.Col([
-        #                     html.Small(
-        #                         "Hover over points to view fight details",
-        #                         className="text-muted mt-2 d-block"
-        #                     )
-        #                 ], className="text-center")
-        #             ])
-        #         ])
-        #     ]),
         dbc.Row([
             dbc.Col([
                 dbc.Card([
@@ -190,7 +177,7 @@ def create_matches_tab(fighters_df,stats_df,results_df):
                 dbc.Card([
                     dbc.CardHeader(html.H5("FIGHT STATISTICS", className="text-center")),
                     dbc.CardBody(
-                        dcc.Graph(id="match-stats-chart", style={"height": "372px"})
+                        dcc.Graph(id="match-stats-chart", style={"height": "372px", "backgroundColor": "transparent"}, config={'displayModeBar': False})
                     )
                 ]),
             ], width=7),
@@ -201,7 +188,7 @@ def create_matches_tab(fighters_df,stats_df,results_df):
                 dbc.Card([
                     dbc.CardHeader(html.H5("STRIKE DISTRIBUTION", className="text-center")),
                     dbc.CardBody(
-                        dcc.Graph(id="strike-distribution", style={"height": "600px"})
+                        dcc.Graph(id="strike-distribution", style={"height": "600px", "backgroundColor": "transparent"}, config={'displayModeBar': False})
                     )
                 ]),
             ], width=6),
@@ -209,7 +196,7 @@ def create_matches_tab(fighters_df,stats_df,results_df):
                 dbc.Card([
                     dbc.CardHeader(html.H5("Takedown Analysis", className="text-center")),
                     dbc.CardBody(
-                        dcc.Graph(id="takedown-analysis", style={"height": "600px"})
+                        dcc.Graph(id="takedown-analysis", style={"height": "600px", "backgroundColor": "transparent"}, config={'displayModeBar': False})
                     )
                 ]),
             ], width=6),
@@ -234,10 +221,10 @@ def create_matches_tab(fighters_df,stats_df,results_df):
                                 for i in range(1, 6)},
                             className="mb-4"
                         ),
-                        dcc.Graph(id="fight-timeline", style={"height": "400px"}),
+                        dcc.Graph(id="fight-timeline", style={"height": "400px", "backgroundColor": "transparent"}, config={'displayModeBar': False}),
                         html.Hr(style={"background-color": "gray", "height": "2px"}),
                         html.H5("STRIKE DISTRIBUTION PER ROUND", className="text-center mt-3"),
-                        dcc.Graph(id="fight-round-distribution", style={"height": "400px"})  
+                        dcc.Graph(id="fight-round-distribution", style={"height": "400px", "backgroundColor": "transparent"}, config={'displayModeBar': False})  
                     ])
                 ]),
             ], width=12),
@@ -313,7 +300,7 @@ def create_comparison_tab(fighters_df,results_df,stats_df):
                 dbc.Card([
                     dbc.CardHeader(html.H5("STATS COMPARISON", className="text-center")),
                     dbc.CardBody(
-                        dcc.Graph(id="fighters-comparison-chart", style={"height": "400px"})
+                        dcc.Graph(id="fighters-comparison-chart", style={"height": "400px", "backgroundColor": "transparent"}, config={'displayModeBar': False})
                     )
                 ]),
             ]),

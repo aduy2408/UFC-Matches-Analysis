@@ -26,4 +26,4 @@ app.layout = create_layout_2(fighters_df,results_df,stats_df)
 register_callbacks(app, fighters_df, results_df,stats_df)
 
 if __name__ == '__main__':
-    app.run_server(host='127.0.0.9',port=4455,debug=False)
+    app.run_server(host='127.0.0.9',port=4455,debug=True)
