@@ -21,7 +21,7 @@ from sklearn.linear_model import LogisticRegression
 import joblib
 import os
 import numpy as np
-model_package = joblib.load('/home/duyle/Documents/VSC/Project_DAP391/ufc_model.joblib')
+# model_package = joblib.load('/home/duyle/Documents/VSC/Project_DAP391/ufc_model.joblib')
 MODEL_LOADED = True
 loaded_model = joblib.load('/home/duyle/Documents/VSC/Project_DAP391/best_model_enhanced.pkl')
 scaler = joblib.load('/home/duyle/Documents/VSC/Project_DAP391/scaler_enhanced.pkl')
