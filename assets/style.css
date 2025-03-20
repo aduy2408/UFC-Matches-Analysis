@@ -23,16 +23,120 @@ body::before {
 }
 
 /* Enhanced dropdown styling */
-.Select-control {
+
+.custom_dropdown_1{
+
+    align-items: center;
+}
+
+.Select-control, .custom_dropdown, .custom_dropdown_1 .Select-control {
     background-color: #1a1a1a !important;
+    position:relative !important;
     border: 1px solid #333 !important;
     border-radius: 8px !important;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
     color: white !important;
     font-size: 16px !important;
-    padding: 8px !important;
+    /* position: absolute !important; */
+
     transition: all 0.3s ease !important;
+    height: 50px !important;
+    line-height: 50px !important;
+    min-width: 250px !important;
 }
+
+
+.custom_dropdown {
+    width: 100% !important;
+}
+
+.Select {
+    width: 100% !important;
+}
+
+.Select-input {
+    height: 50px !important;
+    padding: 0 12px !important;
+}
+
+.Select-placeholder,
+.Select-value {
+    line-height: 50px !important;
+    padding-left: 12px !important;
+    color: #ffffff80 !important;
+}
+
+.Select-menu-outer {
+    background-color: #1a1a1a !important;
+    border: 1px solid #333 !important;
+    border-top: none !important;
+    border-radius: 0 0 8px 8px !important;
+    max-height: 300px !important;
+    margin-top: -1px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+    position: absolute !important;
+    width: 100% !important;
+}
+
+
+
+/* Input group vertical alignment */
+.input-group {
+    align-items: stretch !important;
+    position: relative !important;
+    z-index: 2;
+}
+
+.input-group-text {
+    padding: 0 16px !important;
+    height: 50px !important;
+    display: flex !important;
+    align-items: center !important;
+    background-color: #1a1a1a !important;
+    border-color: #333 !important;
+    border-right: none !important;
+}
+
+.input-group .custom_dropdown {
+    flex: 1 1 auto !important;
+}
+
+/* Ensure dropdown appears above other content */
+.Select.is-open {
+    z-index: 100001 !important;
+}
+
+.Select-control {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+}
+
+.input-group-text + .custom_dropdown .Select-control {
+    border-left: none !important;
+}
+
+.Select-value-label {
+    color: white !important;
+}
+
+.Select-menu {
+    max-height: 298px !important;
+}
+
+.Select-option {
+    padding: 12px !important;
+    color: white !important;
+}
+
+.Select-value {
+    line-height: 50px !important;
+}
+
+.Select-placeholder {
+    line-height: 50px !important;
+    padding-left: 12px !important;
+}
+
 
 .Select-control:hover {
     border-color: #dc3545 !important;
@@ -58,6 +162,7 @@ body::before {
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
     backdrop-filter: blur(10px) !important;
     -webkit-backdrop-filter: blur(10px) !important;
+    z-index: 1 !important;
 }
 
 .card:hover {
@@ -74,6 +179,7 @@ body::before {
 
 .card-body {
     padding: 1.5rem !important;
+    overflow: visible !important;
 }
 
 /* Button styling */
@@ -128,7 +234,7 @@ body::before {
     letter-spacing: 1px;
     width: fit-content;
     animation: 
-        typing 1.5s steps(80, end),
+        typing 2s steps(80, end),
         blink-caret 0.75s step-end infinite;
     padding-top: 2rem;
 }
@@ -147,12 +253,25 @@ body::before {
 .overview-text {
     opacity: 0;
     animation: fadeIn 0.75s ease-in forwards;
-    animation-delay: 1.5s;
+    animation-delay: 1.75s;
 }
 
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+.mb-4{
+    z-index: 10000 !important;
+}
+.mb-4-1{
+    z-index: 100 !important;
+}
+
+.h-100{
+
+
+    z-index:2 !important;
 }
 
 /* Responsive layout */
@@ -292,3 +411,4 @@ body::before {
     backdrop-filter: blur(5px) !important;
     -webkit-backdrop-filter: blur(5px) !important;
 }
+

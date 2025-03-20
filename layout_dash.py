@@ -142,73 +142,7 @@ def create_fighters_tab(fighters_df,results_df,stats_df):
             ])
         ], className="mb-4"),
         
-        dbc.Card([
-            dbc.CardHeader([
-                html.H5("FIGHT MOMENTUM ANALYSIS", className="text-center mb-0"),
-                html.Div(className="card-header-icon text-danger text-center mt-2",
-                        children=[html.I(className="fas fa-tachometer-alt fa-2x")])
-            ], className="text-center"),
-            dbc.CardBody([
-                dbc.Row([
-                    dbc.Col([
-                        dbc.Card([
-                            dbc.CardHeader(
-                                html.H6("MOMENTUM GAUGE", className="text-center mb-0")
-                            ),
-                            dbc.CardBody([
-                                dbc.Spinner(
-                                    dcc.Graph(
-                                        id="momentum-gauge",
-                                        config={'displayModeBar': False}
-                                    ),
-                                    color="danger",
-                                    type="border"
-                                )
-                            ])
-                        ])
-                    ], width=4),
-                    dbc.Col([
-                        dbc.Card([
-                            dbc.CardHeader(
-                                html.H6("PERFORMANCE METRICS", className="text-center mb-0")
-                            ),
-                            dbc.CardBody([
-                                dbc.Spinner(
-                                    dcc.Graph(
-                                        id="momentum-radar",
-                                        config={'displayModeBar': False}
-                                    ),
-                                    color="danger",
-                                    type="border"
-                                )
-                            ])
-                        ])
-                    ], width=8),
-                ], className="mb-4"),
-                dbc.Row([
-                    dbc.Col([
-                        html.Label("METRICS WEIGHTING", className="text-danger mb-2 d-block text-center"),
-                        dbc.Card([
-                            dbc.CardBody([
-                                dcc.Slider(
-                                    id='strike-weight',
-                                    min=0,
-                                    max=100,
-                                    value=40,
-                                    marks={
-                                        0: {'label': 'STRIKES', 'style': {'color': '#ffffff'}},
-                                        50: {'label': 'BALANCED', 'style': {'color': '#dc3545'}},
-                                        100: {'label': 'GRAPPLING', 'style': {'color': '#ffffff'}}
-                                    },
-                                    tooltip={"placement": "bottom", "always_visible": True},
-                                    className="mt-2"
-                                )
-                            ])
-                        ], className="bg-transparent border-0")
-                    ], width=12)
-                ]),
-            ]),
-        ], className="mb-4"),
+        # Removed Fight Momentum Analysis Section
 
         dbc.Card([
             dbc.CardHeader([
@@ -269,7 +203,7 @@ def create_matches_tab(fighters_df,stats_df,results_df):
                         dbc.InputGroup([
                             dbc.InputGroupText([
                                 html.I(className="fas fa-trophy text-muted")
-                            ]),
+                            ], style={"border-right": "none"}),
                             dcc.Dropdown(
                                 id='match-dropdown',
                                 options=[{'label': match, 'value': match} for match in sorted(stats_df['BOUT'].unique())],
@@ -277,7 +211,7 @@ def create_matches_tab(fighters_df,stats_df,results_df):
                                 className="custom_dropdown",
                                 placeholder="Search for a match..."
                             ),
-                        ]),
+                        ], className="align-items-center"),
                     ], width=6),
                     dbc.Col([
                         html.H4("MATCH STATS", className="text-danger mb-3"),
@@ -539,7 +473,7 @@ def create_comparison_tab(fighters_df,results_df,stats_df):
                     ], width=4)
                 ])
             ])
-        ], className="mb-4"),
+        ], className="mb-4-1"),
 
         
         # Stats Comparison Section
@@ -779,7 +713,7 @@ def matches_predictions_tab(fighters_df,stats_df,results_df):
                     ], width=5),
                 ], className="align-items-center"),
             ])
-        ], className="mb-4"),
+        ], className="mb-4 "),
         
         dbc.Card([
             dbc.CardHeader(html.H5("FIGHTERS TO PREDICT", className="text-center")), 
@@ -817,7 +751,7 @@ def matches_predictions_tab(fighters_df,stats_df,results_df):
                     ], width=4), 
                 ])
             )
-        ],className="mb-4"),
+        ],className="h-100"),
         
         # Fight Predictions Section
         dbc.Card([
@@ -832,47 +766,39 @@ def matches_predictions_tab(fighters_df,stats_df,results_df):
                 dbc.Row([
                     dbc.Col([
                         dbc.Card([
-                            dbc.CardHeader(html.H6("CONSENSUS PREDICTION", className="text-center mb-0")),
+                            dbc.CardHeader(html.H6("PREDICTION RESULT", className="text-center mb-0")),
                             dbc.CardBody([
-                                dbc.Spinner(
-                                    html.Div(id="consensus-prediction", className="text-center fs-4"),
-                                    color="danger",
-                                    type="border"
-                                )
+                                dbc.Row([
+                                    dbc.Col([
+                                        dbc.Spinner(
+                                            html.Div(id="consensus-prediction", className="text-center fs-4"),
+                                            color="danger",
+                                            type="border"
+                                        ),
+                                        dbc.Progress(
+                                            [
+                                                dbc.Progress(value=0, color="danger", bar=True, id="prediction-progress"),
+                                            ],
+                                            className="my-3",
+                                            style={"height": "4px"}
+                                        ),
+                                        html.Div(id="prediction-loading", className="text-center text-muted small mb-3")
+                                    ], width=12),
+                                    dbc.Col([
+                                        html.Hr(className="my-3"),
+                                        html.Div([
+                                            html.H6("MODEL CONFIDENCE", className="text-center mb-3"),
+                                            dbc.Spinner(
+                                                html.Div(id="model-predictions", className="text-center fs-4"),
+                                                color="danger",
+                                                type="border"
+                                            )
+                                        ])
+                                    ], width=12)
+                                ])
                             ])
                         ])
-                    ], width=12, className="mb-4"),
-                ]),
-                dbc.Row([
-                    dbc.Col([
-                        html.Label("MODEL PREDICTIONS", className="text-danger mb-2 d-block text-center"),
-                        dbc.ButtonGroup([
-                            dbc.Button("Win Probability", id="pred-type-prob", color="danger", outline=True, active=True, className="me-1"),
-                            dbc.Button("Method Analysis", id="pred-type-method", color="danger", outline=True, className="me-1"),
-                            dbc.Button("Round Prediction", id="pred-type-round", color="danger", outline=True),
-                        ], className="d-flex justify-content-center mb-4")
                     ], width=12),
-                ]),
-                dbc.Row([
-                    dbc.Col([
-                        dbc.Spinner(
-                            html.Div(id="model-predictions", className="animated fadeIn"),
-                            color="danger",
-                            type="border"
-                        )
-                    ], width=12)
-                ]),
-                dbc.Row([
-                    dbc.Col([
-                        dbc.Progress(
-                            [
-                                dbc.Progress(value=0, color="danger", bar=True, id="prediction-progress"),
-                            ],
-                            className="mb-3",
-                            style={"height": "4px"}
-                        ),
-                        html.Div(id="prediction-loading", className="text-center text-muted small")
-                    ], width=12)
                 ])
             ])
         ], className="mb-4"),
@@ -929,24 +855,24 @@ def matches_predictions_tab(fighters_df,stats_df,results_df):
                                 ], className="mb-3"),
                                 dbc.Progress(
                                     [
-                                        dbc.Progress(value=85, color="success", bar=True, 
-                                                   label="Accuracy: 85%"),
+                                        dbc.Progress(value=63.2, color="success", bar=True, 
+                                                   label="Accuracy: 63.2%"),
                                     ],
                                     className="mb-2",
                                 ),
-                                dbc.Progress(
-                                    [
-                                        dbc.Progress(value=82, color="info", bar=True, 
-                                                   label="Precision: 82%"),
-                                    ],
-                                    className="mb-2",
-                                ),
-                                dbc.Progress(
-                                    [
-                                        dbc.Progress(value=88, color="warning", bar=True, 
-                                                   label="Recall: 88%"),
-                                    ],
-                                ),
+                                # dbc.Progress(
+                                #     [
+                                #         dbc.Progress(value=82, color="info", bar=True, 
+                                #                    label="Precision: 82%"),
+                                #     ],
+                                #     className="mb-2",
+                                # ),
+                                # dbc.Progress(
+                                #     [
+                                #         dbc.Progress(value=88, color="warning", bar=True, 
+                                #                    label="Recall: 88%"),
+                                #     ],
+                                # ),
                             ])
                         ])
                     ], width=6),
@@ -959,7 +885,7 @@ def matches_predictions_tab(fighters_df,stats_df,results_df):
                         ], color="warning", className="text-center mb-0 mt-3")
                     ], width=12)
                 ])
-            ])
+            ],className='mb-4')
         ])
     ])
 
