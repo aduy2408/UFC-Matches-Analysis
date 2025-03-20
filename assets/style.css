@@ -1,0 +1,192 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Global styles */
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Enhanced dropdown styling */
+.Select-control {
+    background-color: #1a1a1a !important;
+    border: 1px solid #333 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+    color: white !important;
+    font-size: 16px !important;
+    padding: 8px !important;
+    transition: all 0.3s ease !important;
+}
+
+.Select-control:hover {
+    border-color: #dc3545 !important;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2) !important;
+}
+
+.VirtualizedSelectOption {
+    background-color: #1a1a1a !important;
+    border: none !important;
+    transition: background-color 0.2s ease;
+}
+
+.VirtualizedSelectOption:hover {
+    background-color: #2a2a2a !important;
+}
+
+/* Card styling */
+.card {
+    background-color: #1a1a1a !important;
+    border: 1px solid #333 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%) !important;
+    border-bottom: 1px solid #333 !important;
+    padding: 1rem 1.25rem !important;
+}
+
+.card-body {
+    padding: 1.5rem !important;
+}
+
+/* Button styling */
+.btn {
+    border-radius: 8px !important;
+    padding: 0.75rem 1.5rem !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+    border: none !important;
+    box-shadow: 0 4px 6px rgba(220, 53, 69, 0.2) !important;
+}
+
+.btn-danger:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(220, 53, 69, 0.3) !important;
+}
+
+/* Gradient text animation */
+.gradient-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    letter-spacing: 2px;
+    background: linear-gradient(45deg, 
+        #dc3545 0%, 
+        #c82333 25%, 
+        #bd2130 50%, 
+        #c82333 75%, 
+        #dc3545 100%);
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 4s ease infinite;
+}
+
+@keyframes shine {
+    from { background-position: 0% center; }
+    to { background-position: 300% center; }
+}
+
+/* Typewriter effect */
+.typewriter-text {
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    border-right: 2px solid #dc3545;
+    white-space: nowrap;
+    margin: 0 auto;
+    letter-spacing: 1px;
+    width: fit-content;
+    animation: 
+        typing 1.5s steps(80, end),
+        blink-caret 0.75s step-end infinite;
+    padding-top: 2rem;
+}
+
+@keyframes typing {
+    from { width: 0 }
+    to { width: 450px }
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: #dc3545 }
+}
+
+/* Fade in animation */
+.overview-text {
+    opacity: 0;
+    animation: fadeIn 0.75s ease-in forwards;
+    animation-delay: 1.5s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive layout */
+.min-vh-80 {
+    min-height: 70vh !important;
+    display: flex;
+    align-items: center;
+    padding-bottom: 5rem;
+}
+
+/* Navbar styling */
+.navbar {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.nav-link {
+    color: #fff !important;
+    font-weight: 500 !important;
+    padding: 0.5rem 1rem !important;
+    transition: color 0.3s ease !important;
+}
+
+.nav-link:hover {
+    color: #dc3545 !important;
+}
+
+/* Plot styling */
+.js-plotly-plot {
+    transition: all 0.3s ease !important;
+}
+
+.js-plotly-plot .plot-container {
+    border-radius: 8px !important;
+}
+
+/* Spinner */
+.spinner-grow {
+    color: #dc3545 !important;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .card {
+        margin-bottom: 1rem !important;
+    }
+    
+    .btn {
+        width: 100% !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .navbar-nav {
+        margin-top: 1rem !important;
+    }
+}
