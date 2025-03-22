@@ -1015,7 +1015,66 @@ def create_layout_2(fighters_df, results_df,stats_df):
         ),
         navbar,
         content,
-        dcc.Store(id='active-tab', data='home')
+        dcc.Store(id='active-tab', data='home'),
+        # Chat bubble component
+        html.Div(
+            className="chat-bubble",
+            children=[
+                html.Button(
+                    html.I(className="fas fa-comments", style={"color": "white", "font-size": "24px"}),
+                    id="chat-button",
+                    className="chat-button",
+                ),
+                html.Div(
+                    id="chat-window",
+                    className="chat-window",
+                    style={"display": "none"},
+                    children=[
+                        html.Div(
+                            className="chat-header",
+                            children=[
+                                html.Div([
+                                html.H6("UFC Chat Assistant", style={"margin": "0", "marginBottom": "4px", "color": "white"}),
+                                html.Div("Powered by Group 5 AI18D02", style={
+                                    "fontSize": "12px",
+                                    "color": "rgba(255, 255, 255, 0.6)",
+                                })
+                            ]),
+                                html.Button(
+                                    html.I(className="fas fa-times", style={"color": "white"}),
+                                    id="close-chat",
+                                    style={
+                                        "background": "none",
+                                        "border": "none",
+                                        "cursor": "pointer"
+                                    }
+                                )
+                            ]
+                        ),
+                        dcc.Store(id="temp-messages", data=[]),
+                        html.Div(id="chat-messages", className="chat-messages"),
+                        html.Div(
+                            className="chat-input",
+                            children=[
+                                dcc.Input(
+                                    id="chat-message-input",
+                                    type="text",
+                                    placeholder="Type your message...",
+                                    style={"flex": "1", "outline": "none"},
+                                    n_submit=0, 
+                                    autoFocus=False 
+                                ),
+                                html.Button(
+                                    "Send",
+                                    id="send-message",
+                                    style={"marginLeft": "8px"}
+                                )
+                            ]
+                        )
+                    ]
+                )
+            ]
+        )
     ])
     
     return layout
