@@ -1,29 +1,65 @@
 
-from dash import dcc, html, Input, Output
+from dash import dcc, html, Input, Output, callback_context
+import dash
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 import dash_bootstrap_components as dbc
 import pandas as pd
 
 def register_comparison_callbacks(app, fighters_df, results_df, stats_df):
+    # Track active buttons in button groups
+    @app.callback(
+        [Output("stats-type-overall", "active"),
+         Output("stats-type-strikes", "active"),
+         Output("stats-type-grappling", "active")],
+        [Input("stats-type-overall", "n_clicks"),
+         Input("stats-type-strikes", "n_clicks"),
+         Input("stats-type-grappling", "n_clicks")]
+    )
+    def update_stats_type_active(*args):
+        ctx = dash.callback_context
+        if not ctx.triggered:
+            return True, False, False
+        button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+        return (button_id == "stats-type-overall",
+                button_id == "stats-type-strikes",
+                button_id == "stats-type-grappling")
     @app.callback(
         Output("fighters-comparison-chart", "figure"),
         [Input("fighter1-dropdown", "value"),
-        Input("fighter2-dropdown", "value")]
+         Input("fighter2-dropdown", "value"),
+         Input("stats-type-overall", "active"),
+         Input("stats-type-strikes", "active"),
+         Input("stats-type-grappling", "active")]
     )
-    def update_fighters_comparison(fighter1_name, fighter2_name):
+    def update_fighters_comparison(fighter1_name, fighter2_name, show_overall, show_strikes, show_grappling):
         fighter1 = fighters_df[fighters_df['Name'] == fighter1_name].iloc[0]
         fighter2 = fighters_df[fighters_df['Name'] == fighter2_name].iloc[0]
         
-        categories = ['Striking_Accuracy', 'Takedown_Accuracy', 'Sig_Str_Def', 'Takedown_Def', 'Knockdown_Avg', 'Sub_Avg_Per_Min']
-        max_values = {
-        'Striking_Accuracy': 1,
-        'Takedown_Accuracy': 1,
-        'Sig_Str_Def': 1,
-        'Takedown_Def': 1,
-        'Knockdown_Avg': fighters_df['Knockdown_Avg'].max(),
-        'Sub_Avg_Per_Min': fighters_df['Sub_Avg_Per_Min'].max()
-        }
+        if not fighter1_name or not fighter2_name:
+            return {}
+            
+        fighter1 = fighters_df[fighters_df['Name'] == fighter1_name].iloc[0]
+        fighter2 = fighters_df[fighters_df['Name'] == fighter2_name].iloc[0]
+
+        if show_overall:
+            categories = ['Striking_Accuracy', 'Takedown_Accuracy', 'Sig_Str_Def', 'Takedown_Def', 'Knockdown_Avg', 'Sub_Avg_Per_Min']
+            max_values = {
+                'Striking_Accuracy': 1,
+                'Takedown_Accuracy': 1,
+                'Sig_Str_Def': 1,
+                'Takedown_Def': 1,
+                'Knockdown_Avg': fighters_df['Knockdown_Avg'].max(),
+                'Sub_Avg_Per_Min': fighters_df['Sub_Avg_Per_Min'].max()
+            }
+        elif show_strikes:
+            categories = ['Sig_Strikes_Head_Percent', 'Sig_Strikes_Body_Percent', 'Sig_Strikes_Leg_Percent',
+                         'Sig_Strikes_While_Standing_Percent', 'Sig_Strikes_While_Clinched_Percent', 'Sig_Strikes_While_Grounded_Percent']
+            max_values = {cat: 1 for cat in categories}
+        else:  # show_grappling
+            categories = ['Takedown_Accuracy', 'Takedown_Def', 'Sub_Avg_Per_Min',
+                         'Win_by_Submission_Percent', 'Sig_Strikes_While_Clinched_Percent', 'Sig_Strikes_While_Grounded_Percent']
+            max_values = {cat: 1 for cat in categories}
         
         values_1 = [fighter1[cat]/max_values[cat] for cat in categories]
         values_2 = [fighter2[cat]/max_values[cat] for cat in categories]
@@ -102,11 +138,31 @@ def register_comparison_callbacks(app, fighters_df, results_df, stats_df):
         return fig
 
     @app.callback(
+        [Output("tape-type-physical", "active"),
+         Output("tape-type-career", "active"),
+         Output("tape-type-form", "active")],
+        [Input("tape-type-physical", "n_clicks"),
+         Input("tape-type-career", "n_clicks"),
+         Input("tape-type-form", "n_clicks")]
+    )
+    def update_tape_type_active(*args):
+        ctx = dash.callback_context
+        if not ctx.triggered:
+            return True, False, False
+        button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+        return (button_id == "tape-type-physical",
+                button_id == "tape-type-career",
+                button_id == "tape-type-form")
+
+    @app.callback(
         Output("tale-of-tape-content", "children"),
         [Input("fighter1-dropdown", "value"),
-         Input("fighter2-dropdown", "value")]
+         Input("fighter2-dropdown", "value"),
+         Input("tape-type-physical", "active"),
+         Input("tape-type-career", "active"),
+         Input("tape-type-form", "active")]
     )
-    def update_tale_of_tape(fighter1_name, fighter2_name):
+    def update_tale_of_tape(fighter1_name, fighter2_name, show_physical, show_career, show_form):
         if not fighter1_name or not fighter2_name:
             return html.Div("Please select two fighters")
         
@@ -120,16 +176,26 @@ def register_comparison_callbacks(app, fighters_df, results_df, stats_df):
         f1_total_fights = fighter1['Wins'] + fighter1['Losses'] + fighter1['Draws']
         f2_total_fights = fighter2['Wins'] + fighter2['Losses'] + fighter2['Draws']
         
-        comparison_data = [
-            ("Weight Class", fighter1['Weight_Class'], fighter2['Weight_Class']),
-            ("Total Fights", f"{f1_total_fights} ({fighter1['Wins']}-{fighter1['Losses']}-{fighter1['Draws']})", 
-             f"{f2_total_fights} ({fighter2['Wins']}-{fighter2['Losses']}-{fighter2['Draws']})"),
-            ("Place of Birth", fighter1['Place_of_Birth'] if pd.notna(fighter1['Place_of_Birth']) else "N/A", 
-             fighter2['Place_of_Birth'] if pd.notna(fighter2['Place_of_Birth']) else "N/A"),
-            ("Octagon Debut", fighter1['Octagon_Debut'], fighter2['Octagon_Debut']),
-            ("Average Fight Time", f"{fighter1['Avg_Fight_Time']}s", f"{fighter2['Avg_Fight_Time']}s"),
-            ("First Round Finishes", str(fighter1['First_Round_Finishes']), str(fighter2['First_Round_Finishes']))
-        ]
+        if show_physical:
+            comparison_data = [
+                ("Weight Class", fighter1['Weight_Class'], fighter2['Weight_Class']),
+                ("Place of Birth", fighter1['Place_of_Birth'] if pd.notna(fighter1['Place_of_Birth']) else "N/A", 
+                 fighter2['Place_of_Birth'] if pd.notna(fighter2['Place_of_Birth']) else "N/A")
+            ]
+        elif show_career:
+            comparison_data = [
+                ("Total Fights", f"{f1_total_fights} ({fighter1['Wins']}-{fighter1['Losses']}-{fighter1['Draws']})", 
+                 f"{f2_total_fights} ({fighter2['Wins']}-{fighter2['Losses']}-{fighter2['Draws']})"),
+                ("Octagon Debut", fighter1['Octagon_Debut'], fighter2['Octagon_Debut']),
+                ("Average Fight Time", f"{fighter1['Avg_Fight_Time']}s", f"{fighter2['Avg_Fight_Time']}s")
+            ]
+        else:  # show_form
+            comparison_data = [
+                ("First Round Finishes", str(fighter1['First_Round_Finishes']), str(fighter2['First_Round_Finishes'])),
+                ("KO/TKO Rate", f"{fighter1['Win_by_KO/TKO_Percent']:.0%}", f"{fighter2['Win_by_KO/TKO_Percent']:.0%}"),
+                ("Submission Rate", f"{fighter1['Win_by_Submission_Percent']:.0%}", f"{fighter2['Win_by_Submission_Percent']:.0%}"),
+                ("Decision Rate", f"{fighter1['Win_by_Decision_Percent']:.0%}", f"{fighter2['Win_by_Decision_Percent']:.0%}")
+            ]
         
         for label, val1, val2 in comparison_data:
             table_rows.append(
@@ -152,55 +218,107 @@ def register_comparison_callbacks(app, fighters_df, results_df, stats_df):
         ], bordered=True, dark=False, hover=True, responsive=True)
 
     @app.callback(
+        [Output("style-type-striking", "active"),
+         Output("style-type-ground", "active")],
+        [Input("style-type-striking", "n_clicks"),
+         Input("style-type-ground", "n_clicks")]
+    )
+    def update_style_type_active(*args):
+        ctx = dash.callback_context
+        if not ctx.triggered:
+            return True, False
+        button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+        return (button_id == "style-type-striking",
+                button_id == "style-type-ground")
+
+    @app.callback(
         Output("fighting-style-comparison", "figure"),
         [Input("fighter1-dropdown", "value"),
-         Input("fighter2-dropdown", "value")]
+         Input("fighter2-dropdown", "value"),
+         Input("style-type-striking", "active"),
+         Input("style-type-ground", "active")]
     )
-    def update_fighting_style(fighter1_name, fighter2_name):
+    def update_fighting_style(fighter1_name, fighter2_name, show_striking, show_ground):
         if not fighter1_name or not fighter2_name:
             return {}
         
         fighter1 = fighters_df[fighters_df['Name'] == fighter1_name].iloc[0]
         fighter2 = fighters_df[fighters_df['Name'] == fighter2_name].iloc[0]
         
-        fig = make_subplots(rows=2, cols=1, 
-                           subplot_titles=("Strike Target Distribution", "Strike Position Distribution"),
-                           vertical_spacing=0.25)
-        
-        # Strike Target Distribution
-        categories = ['Head', 'Body', 'Leg']
-        f1_values = [fighter1['Sig_Strikes_Head_Percent'], 
-                    fighter1['Sig_Strikes_Body_Percent'],
-                    fighter1['Sig_Strikes_Leg_Percent']]
-        f2_values = [fighter2['Sig_Strikes_Head_Percent'],
-                    fighter2['Sig_Strikes_Body_Percent'],
-                    fighter2['Sig_Strikes_Leg_Percent']]
-        
-        fig.add_trace(
-            go.Bar(name=fighter1_name, x=categories, y=f1_values, marker_color='red'),
-            row=1, col=1
-        )
-        fig.add_trace(
-            go.Bar(name=fighter2_name, x=categories, y=f2_values, marker_color='blue'),
-            row=1, col=1
-        )
-        
-        positions = ['Standing', 'Clinched', 'Grounded']
-        f1_pos_values = [fighter1['Sig_Strikes_While_Standing_Percent'],
-                        fighter1['Sig_Strikes_While_Clinched_Percent'],
+        if show_striking:
+            fig = make_subplots(rows=2, cols=1, 
+                            subplot_titles=("Strike Target Distribution", "Strike Position Distribution"),
+                            vertical_spacing=0.25)
+            
+            # Strike Target Distribution
+            categories = ['Head', 'Body', 'Leg']
+            f1_values = [fighter1['Sig_Strikes_Head_Percent'], 
+                        fighter1['Sig_Strikes_Body_Percent'],
+                        fighter1['Sig_Strikes_Leg_Percent']]
+            f2_values = [fighter2['Sig_Strikes_Head_Percent'],
+                        fighter2['Sig_Strikes_Body_Percent'],
+                        fighter2['Sig_Strikes_Leg_Percent']]
+            
+            fig.add_trace(
+                go.Bar(name=fighter1_name, x=categories, y=f1_values, marker_color='red'),
+                row=1, col=1
+            )
+            fig.add_trace(
+                go.Bar(name=fighter2_name, x=categories, y=f2_values, marker_color='blue'),
+                row=1, col=1
+            )
+            
+            # Strike Position Distribution
+            positions = ['Standing', 'Clinched', 'Grounded']
+            f1_pos_values = [fighter1['Sig_Strikes_While_Standing_Percent'],
+                            fighter1['Sig_Strikes_While_Clinched_Percent'],
+                            fighter1['Sig_Strikes_While_Grounded_Percent']]
+            f2_pos_values = [fighter2['Sig_Strikes_While_Standing_Percent'],
+                            fighter2['Sig_Strikes_While_Clinched_Percent'],
+                            fighter2['Sig_Strikes_While_Grounded_Percent']]
+            
+            fig.add_trace(
+                go.Bar(name=fighter1_name, x=positions, y=f1_pos_values, marker_color='red', showlegend=False),
+                row=2, col=1
+            )
+            fig.add_trace(
+                go.Bar(name=fighter2_name, x=positions, y=f2_pos_values, marker_color='blue', showlegend=False),
+                row=2, col=1
+            )
+        else:  # show_ground
+            fig = make_subplots(rows=2, cols=1, 
+                            subplot_titles=("Takedown Success", "Ground Control"),
+                            vertical_spacing=0.25)
+            
+            # Takedown metrics
+            categories = ['Takedown Accuracy', 'Takedown Defense']
+            f1_values = [fighter1['Takedown_Accuracy'], fighter1['Takedown_Def']]
+            f2_values = [fighter2['Takedown_Accuracy'], fighter2['Takedown_Def']]
+            
+            fig.add_trace(
+                go.Bar(name=fighter1_name, x=categories, y=f1_values, marker_color='red'),
+                row=1, col=1
+            )
+            fig.add_trace(
+                go.Bar(name=fighter2_name, x=categories, y=f2_values, marker_color='blue'),
+                row=1, col=1
+            )
+            
+            # Ground game metrics
+            categories = ['Sub Attempts/Min', 'Ground Strike %']
+            f1_values = [fighter1['Sub_Avg_Per_Min'], 
                         fighter1['Sig_Strikes_While_Grounded_Percent']]
-        f2_pos_values = [fighter2['Sig_Strikes_While_Standing_Percent'],
-                        fighter2['Sig_Strikes_While_Clinched_Percent'],
+            f2_values = [fighter2['Sub_Avg_Per_Min'],
                         fighter2['Sig_Strikes_While_Grounded_Percent']]
-        
-        fig.add_trace(
-            go.Bar(name=fighter1_name, x=positions, y=f1_pos_values, marker_color='red', showlegend=False),
-            row=2, col=1
-        )
-        fig.add_trace(
-            go.Bar(name=fighter2_name, x=positions, y=f2_pos_values, marker_color='blue', showlegend=False),
-            row=2, col=1
-        )
+            
+            fig.add_trace(
+                go.Bar(name=fighter1_name, x=categories, y=f1_values, marker_color='red', showlegend=False),
+                row=2, col=1
+            )
+            fig.add_trace(
+                go.Bar(name=fighter2_name, x=categories, y=f2_values, marker_color='blue', showlegend=False),
+                row=2, col=1
+            )
         
         fig.update_layout(
             barmode='group',
@@ -224,24 +342,57 @@ def register_comparison_callbacks(app, fighters_df, results_df, stats_df):
         return fig
 
     @app.callback(
+        [Output("win-type-method", "active"),
+         Output("win-type-round", "active")],
+        [Input("win-type-method", "n_clicks"),
+         Input("win-type-round", "n_clicks")]
+    )
+    def update_win_type_active(*args):
+        ctx = dash.callback_context
+        if not ctx.triggered:
+            return True, False
+        button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+        return (button_id == "win-type-method",
+                button_id == "win-type-round")
+
+    @app.callback(
         Output("win-method-comparison", "figure"),
         [Input("fighter1-dropdown", "value"),
-         Input("fighter2-dropdown", "value")]
+         Input("fighter2-dropdown", "value"),
+         Input("win-type-method", "active"),
+         Input("win-type-round", "active")]
     )
-    def update_win_methods(fighter1_name, fighter2_name):
+    def update_win_methods(fighter1_name, fighter2_name, show_method, show_round):
         if not fighter1_name or not fighter2_name:
             return {}
         
         fighter1 = fighters_df[fighters_df['Name'] == fighter1_name].iloc[0]
         fighter2 = fighters_df[fighters_df['Name'] == fighter2_name].iloc[0]
         
-        categories = ['KO/TKO', 'Submission', 'Decision']
-        f1_values = [fighter1['Win_by_KO/TKO_Percent'], 
-                    fighter1['Win_by_Submission_Percent'],
-                    fighter1['Win_by_Decision_Percent']]
-        f2_values = [fighter2['Win_by_KO/TKO_Percent'],
-                    fighter2['Win_by_Submission_Percent'],
-                    fighter2['Win_by_Decision_Percent']]
+        if show_method:
+            categories = ['KO/TKO', 'Submission', 'Decision']
+            f1_values = [fighter1['Win_by_KO/TKO_Percent'], 
+                        fighter1['Win_by_Submission_Percent'],
+                        fighter1['Win_by_Decision_Percent']]
+            f2_values = [fighter2['Win_by_KO/TKO_Percent'],
+                        fighter2['Win_by_Submission_Percent'],
+                        fighter2['Win_by_Decision_Percent']]
+            title = "Win Method Distribution"
+        else:  # show_round
+            categories = ['Round 1', 'Other Rounds']
+            f1_first = fighter1['First_Round_Finishes']
+            f1_other = fighter1['Wins'] - f1_first
+            f2_first = fighter2['First_Round_Finishes']
+            f2_other = fighter2['Wins'] - f2_first
+            
+            f1_total = f1_first + f1_other
+            f2_total = f2_first + f2_other
+            
+            f1_values = [f1_first/f1_total if f1_total > 0 else 0,
+                        f1_other/f1_total if f1_total > 0 else 0]
+            f2_values = [f2_first/f2_total if f2_total > 0 else 0,
+                        f2_other/f2_total if f2_total > 0 else 0]
+            title = "Round Distribution of Wins"
         
         fig = go.Figure()
         
@@ -262,7 +413,7 @@ def register_comparison_callbacks(app, fighters_df, results_df, stats_df):
         fig.update_layout(
             barmode='group',
             title=dict(
-                text="Win Method Distribution",
+                text=title,
                 font=dict(color="white"),
                 x=0.5
             ),

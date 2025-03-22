@@ -45,7 +45,7 @@ def create_fighters_tab(fighters_df,results_df,stats_df):
                         ]),
                     ], width=6),
                     dbc.Col([
-                        html.H4("QUICK STATS", className="text-danger mb-3"),
+                        html.H4("QUICK STATS", className="text-danger mb-3 text-center"),
                         html.Div(id="quick-stats", className="d-flex justify-content-around")
                     ], width=6),
                 ]),
@@ -213,10 +213,10 @@ def create_matches_tab(fighters_df,stats_df,results_df):
                             ),
                         ], className="align-items-center"),
                     ], width=6),
-                    dbc.Col([
-                        html.H4("MATCH STATS", className="text-danger mb-3"),
-                        html.Div(id="match-quick-stats", className="d-flex justify-content-around")
-                    ], width=6),
+                    # dbc.Col([
+                    #     html.H4("MATCH STATS", className="text-danger mb-3"),
+                    #     html.Div(id="match-quick-stats", className="d-flex justify-content-around")
+                    # ], width=6),
                 ]),
             ])
         ], className="mb-4"),
@@ -896,10 +896,10 @@ def create_landing_page():
             dbc.Col([
                 # Hero Section
                 html.Div([
-                    html.H1("UFC TOURNAMENT ANALYSIS", 
+                    html.H1("SOI KEO` SPORTS MMA", 
                         className="text-center display-1 gradient-text mt-8 pt-5 mb-4"),
                     html.Div(
-                        "Advanced Analytics for Fight Sports", 
+                        "F88 AI18D02", 
                         className="text-center typewriter-text fs-3 mb-5"
                     ),
                 ], className="mb-5"),

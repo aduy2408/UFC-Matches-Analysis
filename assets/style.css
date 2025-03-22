@@ -228,20 +228,20 @@ body::before {
 .typewriter-text {
     font-family: 'Inter', sans-serif;
     overflow: hidden;
-    border-right: 2px solid #dc3545;
+    border-right: 1px solid #dc3545;
     white-space: nowrap;
     margin: 0 auto;
     letter-spacing: 1px;
     width: fit-content;
     animation: 
-        typing 2s steps(80, end),
-        blink-caret 0.75s step-end infinite;
-    padding-top: 2rem;
+        typing 2s steps(40, end),
+        blink-caret 0.8s step-end infinite;
+    /* padding-top: 2rem; */
 }
 
 @keyframes typing {
     from { width: 0 }
-    to { width: 450px }
+    to { width: 250px }
 }
 
 @keyframes blink-caret {

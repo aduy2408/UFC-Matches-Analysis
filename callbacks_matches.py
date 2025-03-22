@@ -6,6 +6,85 @@ import pandas as pd
 
 def register_match_callbacks(app, fighters_df, results_df, stats_df):
     """Register callbacks for the matches tab"""
+    
+    @app.callback(
+        Output("match-quick-stats", "children"),
+        Input("match-dropdown", "value")
+    )
+    def update_match_quick_stats(match_name):
+        if not match_name:
+            return html.Div("Select a match to see stats")
+        
+        match_data = results_df[results_df['BOUT'] == match_name].iloc[0]
+        bout_stats = stats_df[stats_df['BOUT'] == match_name]
+        
+        # Get fighters in the match
+        fighter1 = match_data['FIGHTER_1']
+        fighter2 = match_data['FIGHTER_2']
+        
+        # Determine winner
+        if match_data['fighter_1_result'] == 1:
+            winner = fighter1
+        elif match_data['fighter_2_result'] == 1:
+            winner = fighter2
+        else:
+            winner = "Draw"
+        
+        # Calculate fight duration in minutes and seconds
+        total_time_seconds = match_data['total_time_seconds']
+        minutes = int(total_time_seconds // 60)
+        seconds = int(total_time_seconds % 60)
+        
+        # Calculate total significant strikes landed
+        if not bout_stats.empty:
+            fighter1_stats = bout_stats[bout_stats['FIGHTER'] == fighter1]
+            fighter2_stats = bout_stats[bout_stats['FIGHTER'] == fighter2]
+            
+            total_sig_strikes = (
+                fighter1_stats['sig_str_land'].sum() + 
+                fighter2_stats['sig_str_land'].sum()
+            )
+            
+            # Calculate striking pace (strikes per minute)
+            if total_time_seconds > 0:
+                pace = (total_sig_strikes / total_time_seconds) * 60
+            else:
+                pace = 0
+        else:
+            total_sig_strikes = 0
+            pace = 0
+        
+        return html.Div([
+            dbc.Row([
+                dbc.Col([
+                    html.Div([
+                        html.H4(winner, className="m-0 text-success"),
+                        html.P("WINNER", className="text-muted small m-0")
+                    ], className="text-center")
+                ], width=3),
+                
+                dbc.Col([
+                    html.Div([
+                        html.H4(f"{match_data['method_label']}", className="m-0 text-danger"),
+                        html.P("VICTORY METHOD", className="text-muted small m-0")
+                    ], className="text-center")
+                ], width=3),
+                
+                dbc.Col([
+                    html.Div([
+                        html.H4(f"{int(total_sig_strikes)}", className="m-0 text-danger"),
+                        html.P("TOTAL SIG. STRIKES", className="text-muted small m-0")
+                    ], className="text-center")
+                ], width=3),
+                
+                dbc.Col([
+                    html.Div([
+                        html.H4(f"{minutes}:{seconds:02d}", className="m-0 text-danger"),
+                        html.P("FIGHT DURATION", className="text-muted small m-0")
+                    ], className="text-center")
+                ], width=3),
+            ])
+        ])
     @app.callback(
         Output("match-details-content", "children"),
         Input("match-dropdown", "value")
