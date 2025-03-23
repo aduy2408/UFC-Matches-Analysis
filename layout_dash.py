@@ -388,7 +388,7 @@ def create_comparison_tab(fighters_df,results_df,stats_df):
             dbc.CardBody([
                 dbc.Row([
                     dbc.Col([
-                        html.H4("FIGHTER 1 SELECTION", className="text-danger mb-3"),
+                        html.H4("FIGHTER 1 SELECTION", className="text-danger mb-3 text-center"),
                         dbc.InputGroup([
                             dbc.InputGroupText([
                                 html.I(className="fas fa-user text-muted")
@@ -400,7 +400,7 @@ def create_comparison_tab(fighters_df,results_df,stats_df):
                                 className="custom_dropdown",
                                 placeholder="Select first fighter..."
                             ),
-                        ]),
+                        ], className="prediction-input-group"),
                     ], width=5),
                     dbc.Col([
                         html.Div([
@@ -409,7 +409,7 @@ def create_comparison_tab(fighters_df,results_df,stats_df):
                         ], className="h-100 d-flex flex-column justify-content-center align-items-center")
                     ], width=2),
                     dbc.Col([
-                        html.H4("FIGHTER 2 SELECTION", className="text-danger mb-3"),
+                        html.H4("FIGHTER 2 SELECTION", className="text-danger mb-3 text-center"),
                         dbc.InputGroup([
                             dbc.InputGroupText([
                                 html.I(className="fas fa-user text-muted")
@@ -421,7 +421,7 @@ def create_comparison_tab(fighters_df,results_df,stats_df):
                                 className="custom_dropdown",
                                 placeholder="Select second fighter..."
                             ),
-                        ]),
+                        ], className="prediction-input-group"),
                     ], width=5),
                 ], className="align-items-center"),
             ])
@@ -524,7 +524,7 @@ def create_comparison_tab(fighters_df,results_df,stats_df):
                         dbc.ButtonGroup([
                             dbc.Button("Physical Stats", id="tape-type-physical", color="danger", outline=True, active=True, className="me-1"),
                             dbc.Button("Career Stats", id="tape-type-career", color="danger", outline=True, className="me-1"),
-                            dbc.Button("Form Guide", id="tape-type-form", color="danger", outline=True),
+                            dbc.Button("Finishing Stats", id="tape-type-form", color="danger", outline=True),
                         ], className="d-flex justify-content-center mb-4")
                     ], width=12),
                 ]),
@@ -679,10 +679,10 @@ def matches_predictions_tab(fighters_df,stats_df,results_df):
                                 id='predict-fighter1-dropdown',
                                 options=[{'label': name.title(), 'value': name} for name in fighters_df['Name']],
                                 value=fighters_df['Name'][0],
-                                className="custom_dropdown",
+                                className="custom-dropdown",
                                 placeholder="Select first fighter..."
                             ),
-                        ]),
+                        ],className='prediction-input-group'),
                     ], width=5),
                     dbc.Col([
                         html.Div([
@@ -706,10 +706,10 @@ def matches_predictions_tab(fighters_df,stats_df,results_df):
                                 id='predict-fighter2-dropdown',
                                 options=[{'label': name.title(), 'value': name} for name in fighters_df['Name']],
                                 value=fighters_df['Name'][1],
-                                className="custom_dropdown",
+                                className="custom-dropdown",
                                 placeholder="Select second fighter..."
                             ),
-                        ]),
+                        ],className='prediction-input-group'),
                     ], width=5),
                 ], className="align-items-center"),
             ])
@@ -881,7 +881,7 @@ def matches_predictions_tab(fighters_df,stats_df,results_df):
                     dbc.Col([
                         dbc.Alert([
                             html.I(className="fas fa-exclamation-triangle me-2"),
-                            "Disclaimer: These predictions are for informational purposes only and should not be used for betting.",
+                            "Disclaimer: These predictions are not for educational purposes only and should be used for betting.",
                         ], color="warning", className="text-center mb-0 mt-3")
                     ], width=12)
                 ])
@@ -964,7 +964,7 @@ def create_landing_page():
                     ], className="text-center fs-5 mb-4"),
                     
                     html.P([
-                        "Explore fighter profiles, analyze matchups, and get AI-powered predictions for upcoming fights.",
+                        "Explore fighter profiles, analyze matchups, AI-powered predictions for upcoming fights and an assistant chatbot for newest data.",
                     ], className="text-center fs-5 text-muted")
                 ], className="overview-text mt-4")
             ], width=12)

@@ -108,12 +108,14 @@ def toggle_chat_window(open_clicks, close_clicks, existing_messages):
 
 I'm your expert UFC analyst chatbot powered by **Group 5 AI18D02**. I can help you with:
 
-• **Fighter Statistics** and performance analysis
-• **Match History** and fight breakdowns
-• **Ben xe lua
+• Search up more details on **Fighter Statistics** 
+• Search up details on **Match History** or fight breakdowns
+• Explain the **Rules of UFC** or **Fighter Rankings**
+
 
 Feel free to ask me anything about UFC - I'll analyze data and provide detailed insights backed by reliable sources.
 
+Ccho ben xe lua
 """
 
         }

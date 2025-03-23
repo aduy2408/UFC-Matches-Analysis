@@ -494,6 +494,7 @@ def register_comparison_callbacks(app, fighters_df, results_df, stats_df):
         
         return fight_time, first_round
 
+
     @app.callback(
         Output("head-to-head-content", "children"),
         [Input("fighter1-dropdown", "value"),
@@ -515,8 +516,15 @@ def register_comparison_callbacks(app, fighters_df, results_df, stats_df):
                 html.P("These fighters have not faced each other.", className="text-center")
             ])
         
-        fighter1_wins = head_to_head[head_to_head['fighter_1_result'] == 1].shape[0]
-        fighter2_wins = head_to_head[head_to_head['fighter_2_result'] == 1].shape[0]
+        fighter1_wins = len(head_to_head[
+                ((head_to_head['FIGHTER_1'] == fighter1_name) & (head_to_head['fighter_1_result'] == 1)) |
+                ((head_to_head['FIGHTER_2'] == fighter1_name) & (head_to_head['fighter_2_result'] == 1))
+            ])
+            
+        fighter2_wins = len(head_to_head[
+                ((head_to_head['FIGHTER_1'] == fighter2_name) & (head_to_head['fighter_1_result'] == 1)) |
+                ((head_to_head['FIGHTER_2'] == fighter2_name) & (head_to_head['fighter_2_result'] == 1))
+            ])
         
         return html.Div([
             html.H4("HEAD-TO-HEAD RECORD", className="text-center mb-3"),
