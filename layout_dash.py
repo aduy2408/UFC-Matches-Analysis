@@ -7,7 +7,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
 
-# Define common plot layout settings
 plot_layout = {
     "paper_bgcolor": "rgba(0,0,0,0)",
     "plot_bgcolor": "rgba(0,0,0,0)",
@@ -15,7 +14,6 @@ plot_layout = {
     "margin": dict(t=20, l=20, r=20, b=20),
 }
 
-# Define grid settings
 grid_settings = {
     "gridcolor": "rgba(128, 128, 128, 0.1)",
     "zerolinecolor": "rgba(128, 128, 128, 0.2)"

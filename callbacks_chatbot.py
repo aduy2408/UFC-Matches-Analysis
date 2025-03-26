@@ -202,7 +202,7 @@ Always structure your responses with these formatting rules:
 
 1. Start each main topic with a ### header
 2. Place a blank line after each header
-3. Use **bold text** for fighter names, statistics
+3. Use **bold text** for fighter names, statistics. DO not use bold on your keywords.
 4. Use bullet points (•) for listing attributes or characteristics
 5. Use numbered lists (1., 2., etc.) for sequential events or rankings
 6. When citing sources, use [1], [2], etc. and include sources at the end
@@ -223,6 +223,9 @@ Example structure:
 1. Won against **Mike Smith** [1]
 2. Lost to **Tom Jones** [2]
 
+Sources:
+[1] UFC.com 2024
+[2] Sherdog.com 2024
 """},
                 {"role": "user", "content": messages[-2]["message"]}  # Get the last user message
             ],
