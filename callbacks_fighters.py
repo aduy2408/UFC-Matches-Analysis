@@ -5,6 +5,50 @@ import pandas as pd
 
 def register_fighter_callbacks(app, fighters_df, results_df, stats_df):
     """Register callbacks for the fighters tab"""
+    
+    @app.callback(
+        Output("quick-stats", "children"),
+        Input("fighter-dropdown", "value")
+    )
+    def update_fighter_quick_stats(fighter_name):
+        if not fighter_name:
+            return html.Div("Select a fighter to see stats")
+        
+        fighter = fighters_df[fighters_df['Name'] == fighter_name].iloc[0]
+        
+        # Get average fight time in minutes and seconds
+        avg_time_seconds = fighter['Avg_Fight_Time']
+        avg_time_min = int(avg_time_seconds // 60)
+        avg_time_sec = int(avg_time_seconds % 60)
+        
+        # Calculate striking differential
+        sig_strikes_per_min = fighter['Sig_Strikes_Per Min']
+        sig_strikes_absorbed = fighter['Sig_Strikes_Absorbed_Per_Min']
+        striking_differential = sig_strikes_per_min - sig_strikes_absorbed
+        
+        return html.Div([
+            dbc.Row([
+                dbc.Col([
+                    html.Div([
+                        html.H4(f"{fighter['Sig_Strikes_Per Min']:.1f}", className="m-0 text-danger"),
+                        html.P("SIG. STR. PER MIN", className="text-muted small m-0")
+                    ], className="text-left")
+                ], width=4),
+                dbc.Col([
+                    html.Div([
+                        html.H4(f"{fighter['Striking_Accuracy']:.0%}", className="m-0 text-danger"),
+                        html.P("STRIKING ACC.", className="text-muted small m-0")
+                    ], className="text-left")
+                ], width=4),
+                dbc.Col([
+                    html.Div([
+                        html.H4(f"{striking_differential:+.1f}", 
+                              className=f"m-0 {'text-success' if striking_differential > 0 else 'text-danger'}"),
+                        html.P("STR. DIFFERENTIAL", className="text-muted small m-0")
+                    ], className="text-left")
+                ], width=4),
+            ],className="text-left"),
+        ])
     @app.callback(
         Output("fighter-profile-content", "children"),
         Input("fighter-dropdown", "value")
@@ -267,6 +311,53 @@ def register_fighter_callbacks(app, fighters_df, results_df, stats_df):
         return fig
     
     
+    @app.callback(
+        [Output("win-streak", "children"),
+         Output("finish-rate", "children"),
+         Output("avg-fight-time", "children")],
+        Input("fighter-dropdown", "value")
+    )
+    def update_fighter_performance_metrics(fighter_name):
+        if not fighter_name:
+            return html.Div(), html.Div(), html.Div()
+        
+        # Get fighter data
+        fighter = fighters_df[fighters_df['Name'] == fighter_name].iloc[0]
+        
+        # Get fighter fights sorted by date (most recent first)
+        fighter_fights = results_df[
+            (results_df['FIGHTER_1'] == fighter_name) | (results_df['FIGHTER_2'] == fighter_name)
+        ].sort_values('DATE', ascending=False)
+        
+        # Calculate win streak
+        win_streak = 0
+        for _, fight in fighter_fights.iterrows():
+            is_fighter_1 = fight['FIGHTER_1'] == fighter_name
+            if (is_fighter_1 and fight['fighter_1_result'] == 1) or \
+               (not is_fighter_1 and fight['fighter_2_result'] == 1):
+                win_streak += 1
+            else:
+                break
+        
+        # Calculate finish rate (KOs + Submissions / Total Wins)
+        total_wins = fighter['Wins']
+        if total_wins > 0:
+            finishes = fighter['Knockouts'] + fighter['Submissions']
+            finish_rate = finishes / total_wins
+        else:
+            finish_rate = 0
+        
+        # Format average fight time (already in seconds)
+        avg_time_seconds = fighter['Avg_Fight_Time']
+        avg_time_min = int(avg_time_seconds // 60)
+        avg_time_sec = int(avg_time_seconds % 60)
+        
+        return (
+            f"{win_streak}",
+            f"{finish_rate:.0%}",
+            f"{avg_time_min}:{avg_time_sec:02d}"
+        )
+        
     @app.callback(
         [Output('momentum-gauge', 'figure'),
         Output('momentum-radar', 'figure')],

@@ -1,6 +1,7 @@
 # app.py
 from layout_dash import  create_layout_2
-from callbacks_dash import  register_callbacks
+from callbacks_dash import register_callbacks
+from callbacks_chatbot import toggle_chat_window
 import dash
 from dash import dcc, html, callback, Input, Output
 import dash_bootstrap_components as dbc
@@ -23,7 +24,9 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.CYBORG,dbc.icons.FONT
 app.layout = create_layout_2(fighters_df,results_df,stats_df)  
 
 #callbacks
-register_callbacks(app, fighters_df, results_df,stats_df)
+# Register main callbacks
+register_callbacks(app, fighters_df, results_df, stats_df)
+
 
 if __name__ == '__main__':
     app.run_server(host='127.0.0.9',port=4455,debug=True)

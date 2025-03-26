@@ -21,7 +21,7 @@ from sklearn.linear_model import LogisticRegression
 import joblib
 import os
 import numpy as np
-model_package = joblib.load('/home/duyle/Documents/VSC/Project_DAP391/ufc_model.joblib')
+# model_package = joblib.load('/home/duyle/Documents/VSC/Project_DAP391/ufc_model.joblib')
 MODEL_LOADED = True
 loaded_model = joblib.load('/home/duyle/Documents/VSC/Project_DAP391/best_model_enhanced.pkl')
 scaler = joblib.load('/home/duyle/Documents/VSC/Project_DAP391/scaler_enhanced.pkl')
@@ -134,7 +134,9 @@ def register_prediction_callbacks(app, fighters_df, results_df, stats_df):
     @app.callback(
         [Output("consensus-prediction", "children"),
          Output("model-predictions", "children"),
-         Output("model-agreement", "children")],
+         Output("model-agreement", "children"),
+         Output("prediction-progress", "value"),
+         Output("prediction-loading", "children")],
         [Input("predict-button", "n_clicks")],
         [State("predict-fighter1-dropdown", "value"),
          State("predict-fighter2-dropdown", "value")]
@@ -145,7 +147,9 @@ def register_prediction_callbacks(app, fighters_df, results_df, stats_df):
                 html.P("Click the PREDICT WINNER button to see the fight prediction", 
                     className="text-center text-muted"),
                 html.Div(),
-                html.Div()
+                html.Div(),
+                0,
+                ""
             )
             
         if not fighter1_name or not fighter2_name:
@@ -153,7 +157,9 @@ def register_prediction_callbacks(app, fighters_df, results_df, stats_df):
                 html.P("Please select two fighters to compare", 
                     className="text-center text-danger"),
                 html.Div(),
-                html.Div()
+                html.Div(),
+                0,
+                ""
             )
             
         if fighter1_name == fighter2_name:
@@ -161,7 +167,9 @@ def register_prediction_callbacks(app, fighters_df, results_df, stats_df):
                 html.P("Please select different fighters", 
                     className="text-center text-danger"),
                 html.Div(),
-                html.Div()
+                html.Div(),
+                0,
+                ""
             )
         
         # Get predictions from all models
@@ -235,10 +243,10 @@ def register_prediction_callbacks(app, fighters_df, results_df, stats_df):
                       className="text-center")
             ])
             
-            return consensus_div, models_div, agreement_div
+            return consensus_div, models_div, agreement_div, 100, "Prediction complete!"
         else:
             error_div = html.P("Error in prediction", className="text-center text-danger")
-            return error_div, html.Div(), html.Div()
+            return error_div, html.Div(), html.Div(), 0, "Error in prediction"
 
 def create_matchup_features(fighter1, fighter2):
     """Create symmetric matchup features that don't depend on fighter order."""

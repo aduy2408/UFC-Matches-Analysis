@@ -8,7 +8,6 @@ from dash import dcc, html, callback, Input, Output, ctx
 import dash_bootstrap_components as dbc
 
 def register_callbacks(app, fighters_df, results_df, stats_df):
-    """Register all callbacks by calling individual registration functions"""
     # Import all callback modules
     from callbacks_fighters import register_fighter_callbacks
     from callbacks_matches import register_match_callbacks
@@ -42,7 +41,7 @@ def register_callbacks(app, fighters_df, results_df, stats_df):
             return create_landing_page()  # Default to landing page
         except Exception as e:
             print(f"Error in toggle_active_tab: {e}")
-            return create_landing_page()  # Default to landing page on error
+            return create_landing_page()  
     
     @app.callback(
         Output('active-tab', 'data'),
